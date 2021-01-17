@@ -1,6 +1,6 @@
 module General where
 
-import List (isPrefixOf)
+import           Data.List (isPrefixOf)
 -- import Data.PackedString
 
 infixr 5 +/
@@ -28,7 +28,7 @@ class (Eq a, Show a) => Param a where
 
 type Attr = Int
 
-noComp :: Attr 
+noComp :: Attr
 noComp = 0
 
 -- to be able to program mostly with strings
@@ -41,7 +41,7 @@ unStr :: Str -> [String]
 unStr (Str xs) = xs
 
 strings :: [String] -> Str
-strings = Str 
+strings = Str
 
 mkStr1 :: (a -> String) -> a -> Str
 mkStr1 =  (mkStr .)
@@ -71,14 +71,14 @@ dp i s = drop (max 0 (length s - i)) s
 -- prevent the duplication of the first letter of ending: "mus" +? "s" = "mus"
 (+?) :: String -> String -> String
 s +? e = case (s,e) of
-  (_:_, c:cs) | last s == c -> s ++ cs 
-  _ -> s ++ e
+  (_:_, c:cs) | last s == c -> s ++ cs
+  _                         -> s ++ e
 
 -- choose suffix depending on last letter of stem
 ifEndThen :: (Char -> Bool) -> String -> String -> String -> String
 ifEndThen cond s a b = case s of
   _:_ | cond (last s) -> a
-  _ -> b
+  _                   -> b
 
 -- conditionally drop last letter
 dropEndIf :: (Char -> Bool) -> String -> String
@@ -90,16 +90,16 @@ changes cs s = case lookupMark s cs of
   Just (b,e) -> e ++ changes cs (drop (length b) s)
   _ -> case s of
     c:t -> c : changes cs t
-    [] -> []
+    []  -> []
  where
    lookupMark _ [] = Nothing
-   lookupMark st ((b,e):ms) = 
+   lookupMark st ((b,e):ms) =
      if isPrefixOf b st then Just (b,e) else lookupMark st ms
 
 -- change in the beginning of a morpheme only
 changePref ::  [(String,String)] -> String -> String
 changePref cs t = case cs of
-  (s,r) : rs | isPrefixOf s t -> r ++ drop (length s) t 
+  (s,r) : rs | isPrefixOf s t -> r ++ drop (length s) t
              | otherwise -> changePref rs t
   _ -> t
 
@@ -126,7 +126,7 @@ only f as = missing f [a | a <- values, notElem a as]
 variants :: Param a => Finite a -> [(a,String)] -> Finite a
 variants f es p = case lookup p [(a,s) | (a,s) <- es] of
 		   Nothing -> f p
-		   Just s -> strings (s:(unStr (f p)))
+		   Just s -> strings (s: (unStr (f p)))
 
 -- a form that is missing
 nonExist :: Str
@@ -135,7 +135,7 @@ nonExist = Str []
 -- show existing forms only
 existingForms :: Table a -> Table a
 existingForms = filter (not . null . unStr . snd)
-  
+
 -- class operations for parameters
 
 -- THE ESSENTIAL OPERATION: form a table from a function
@@ -152,7 +152,7 @@ indexVal a = maybe undefined id $ lookup a $ zip values [0..]
 
 -- apply a table to an argument
 appTable :: (Param a) => Table a -> a -> Str
-appTable t a = maybe undefined id $ lookup a t 
+appTable t a = maybe undefined id $ lookup a t
 
 -- get the dictionary form
 firstForm :: Param a => Table a -> Str
@@ -165,8 +165,8 @@ giveValues bs a = bs !! indexVal a
 -- the longest common prefix of a set of a list of strings
 
 longestPrefix :: [String] -> String
-longestPrefix ((c:w):ws) = 
-  let (cs,rs) = unzip (map (splitAt 1) ws) 
+longestPrefix ((c:w):ws) =
+  let (cs,rs) = unzip (map (splitAt 1) ws)
   in
   if all (==[c]) cs then c:longestPrefix (w:rs) else ""
 longestPrefix _ = ""

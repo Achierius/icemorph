@@ -18,11 +18,11 @@
 -}
 module BuildON where
 
-import RulesON
-import AttrON
-import TypesON
-import Dictionary
-import General
+import           AttrON
+import           Dictionary
+import           General
+import           RulesON
+import           TypesON
 
 -----------------------------------------------
 -- Interface functions for Nouns.

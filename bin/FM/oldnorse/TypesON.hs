@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin type system
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -20,41 +20,41 @@
 
 module TypesON where
 
-import General
-import Invariant
+import           General
+import           Invariant
 
 -- Parameters for Old Norse morphology
 
 data Case = Nominative | Accusative | Genitive | Dative
  deriving (Show,Eq,Enum,Ord,Bounded)
- 
+
 data Number = Singular | Plural
  deriving (Show,Eq,Enum,Ord,Bounded)
 
 data Gender = Feminine | Masculine | Neuter
- deriving (Show,Eq,Enum,Ord,Bounded) 
- 
-data Person = P1 | P2 | P3   
-  deriving (Show,Eq,Enum,Ord,Bounded) 
+ deriving (Show,Eq,Enum,Ord,Bounded)
+
+data Person = P1 | P2 | P3
+  deriving (Show,Eq,Enum,Ord,Bounded)
 
 --data Mood = Indicative | Optative
---  deriving (Show,Eq,Enum,Ord,Bounded)  
- 
-data Voice = Active | Middle
-  deriving (Show,Eq,Enum,Ord,Bounded) 
-  
-data Tense = Present | Past
-  deriving (Show,Eq,Enum,Ord,Bounded) 
-  
+--  deriving (Show,Eq,Enum,Ord,Bounded)
 
-instance Param Case where values = enum 
-instance Param Number where values = enum 
-instance Param Gender where values = enum       
-instance Param Person where values = enum          
+data Voice = Active | Middle
+  deriving (Show,Eq,Enum,Ord,Bounded)
+
+data Tense = Present | Past
+  deriving (Show,Eq,Enum,Ord,Bounded)
+
+
+instance Param Case where values = enum
+instance Param Number where values = enum
+instance Param Gender where values = enum
+instance Param Person where values = enum
 instance Param Voice where values = enum
 instance Param Tense where values = enum
 
- 
+
 -- Old Norse nouns
 
 
@@ -67,10 +67,10 @@ instance Param NounForm where
 type Noun = NounForm -> Str
 
 
--- Old Norse verbs 
-  
-   
-data VerbForm =   
+-- Old Norse verbs
+
+
+data VerbForm =
     Infinitive Voice |
     PresentParticiple Voice |
     PastParticiple Voice |
@@ -79,25 +79,25 @@ data VerbForm =
     Impera2pl Voice |
     Indicative Voice Number Person Tense |
     Optative Voice Number Person Tense
-  deriving (Show,Eq,Ord)   
-   
+  deriving (Show,Eq,Ord)
+
 instance Param VerbForm where
-    values = 
+    values =
       [Infinitive v | v <- values] ++
       [PresentParticiple v | v <- values] ++
       [PastParticiple v | v <- values] ++
       [Impera2sg v | v <- values] ++
       [Impera1pl v | v <- values] ++
       [Impera2pl v | v <- values] ++
-      [Indicative v n p t | 
-        t <- values,  
+      [Indicative v n p t |
+        t <- values,
         p <- values,
-        n <- values, 
+        n <- values,
         v <- values] ++
-      [Optative v n p t | 
-        t <- values,  
+      [Optative v n p t |
+        t <- values,
         p <- values,
-        n <- values, 
+        n <- values,
         v <- values]
 
 type Verb = VerbForm -> Str

@@ -1,9 +1,9 @@
 module Trie (tcompile, SATrie, decompose,tlookup,isInTrie, Trie, collapse) where
-    
-import Map
-import General
-import Maybe(fromJust)
-import List(nub, inits, tails)
+
+import           Data.List  (inits, nub, tails)
+import           Data.Maybe (fromJust)
+import           General
+import           Map
 
 
 data Trie a = Trie ! (Map Char (Trie a), [a])
@@ -36,7 +36,7 @@ tcompile :: [(String, [a])] -> Trie a
 tcompile = foldl (flip insert) emptyTrie
 
 insert :: (String,[a]) -> Trie a -> Trie a
-insert ([],ys)     t = addVal t ys 
+insert ([],ys)     t = addVal t ys
 insert ((c:cs),ys) t =
   case mTable t ! c of
    Just t' -> case insert (cs,ys) t' of
@@ -46,7 +46,7 @@ insert ((c:cs),ys) t =
 
 trieLookup :: Trie a -> String -> [a] -- [(Attr,String)]
 trieLookup t [] = val t
-trieLookup trie (c:cs) = case mTable trie ! c of 
+trieLookup trie (c:cs) = case mTable trie ! c of
   Just trie -> trieLookup trie cs
   Nothing   -> []
 
@@ -57,16 +57,16 @@ tlookup :: SATrie ->String -> (String,[(Attr,String)])
 tlookup t s = (s,[(a,p) | (a,p) <- trieLookup t s])
 
 collapse :: Trie a -> [(String,[a])] -- [(String, Data)]
-collapse t = collapse' t [] 
- where 
-  collapse' t xs 
+collapse t = collapse' t []
+ where
+  collapse' t xs
     | null (val t) = rest
     | otherwise    = (reverse xs, val t) : rest
    where rest = concat $ [collapse' tr (c:xs) | (c,tr) <- flatten (mTable t)]
 
 decompose :: AttrTrie a -> ([Attr] -> Bool) -> String -> [[(Attr,a)]]
 decompose trie _  [] = []
-decompose trie f sentence = 
+decompose trie f sentence =
     concat $ map (legal trie f) $ deconstruct trie sentence
 
 -- backtrack [(sentence,[])] trie
@@ -79,7 +79,7 @@ legal trie f input = removeInvalids attrValues
    | f (map fst xs)           = xs : removeInvalids xss -- Sequence valid
    | otherwise                = removeInvalids xss
   flatten       [] = [[]] -- combine all analyses with all other analyses
-  flatten (xs:xss) = [x:ys | x <- xs, ys <- res] 
+  flatten (xs:xss) = [x:ys | x <- xs, ys <- res]
       where res = flatten xss
   attrValues = flatten $ map (trieLookup trie) input
 
@@ -93,20 +93,20 @@ split :: String -> [(String,String)]
 split s = zip (inits s) (tails s)
 
 -- Old code (longest match)
-{-	       
+{-
 react :: String -> [String] -> [(String,[String])] -> String -> AttrTrie a -> AttrTrie a -> [String]
-react input output back occ (Trie (arcs,res)) init = 
+react input output back occ (Trie (arcs,res)) init =
     case res of -- Accept = non-empty res.
      [] -> continue back
      _ -> let pushout = (occ:output)
-	    in case input of 
+	    in case input of
 	        [] -> reverse $ map reverse pushout
 		_ -> let pushback = ((input,pushout):back)
 		      in continue pushback
  where continue cont = case input of
 		        []       -> backtrack cont init
 			(l:rest) -> case arcs ! l of
-				     Just trie -> 
+				     Just trie ->
 					 react rest output cont (l:occ) trie init
 				     Nothing -> backtrack cont init
 

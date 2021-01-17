@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin command definitions
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -19,10 +19,10 @@
 
 module CommandsON where
 
-import BuildON
-import Frontend
+import           BuildON
+import           Frontend
 
-commands = 
+commands =
  [
   ("d1heimr", ["heimr"], app1 d1heimr),
   ("d1songr", ["söngr"], app1 d1songr),
@@ -30,7 +30,7 @@ commands =
   ("d1barn", ["barn"], app1 d1barn),
   ("d2sker", ["sker"], app1 d2sker),
   ("d1nidr", ["niðr"], app1 d1nidr),
-  ("d2sjar", ["sjár"], app1 d2sjar),  
+  ("d2sjar", ["sjár"], app1 d2sjar),
   ("d1smjor", ["smjör"], app1 d1smjor),
   ("d1kvadi", ["kvæði"], app1 d1kvadi),
   ("d1nal", ["nál"], app1 d1nal),
@@ -39,8 +39,8 @@ commands =
   ("d1heidr", ["heiðr"], app1 d1heidr),
   ("d1gygr", ["gýgr"], app1 d1gygr),
   ("d1stadr", ["staðr"], app1 d1stadr),
-  ("d1gestr", ["gestr"], app1 d1gestr),  
-  ("d1naud", ["nauð"], app1 d1naud), 
+  ("d1gestr", ["gestr"], app1 d1gestr),
+  ("d1naud", ["nauð"], app1 d1naud),
   ("d2holl", ["höll"], app1 d2holl),
   ("d1ylgr", ["ylgr"], app1 d1ylgr),
   ("d1fingr", ["fingr"], app1 d1fingr),
@@ -71,5 +71,5 @@ commands =
   ("d1lyja", ["lýja"], app1 d1lyja),
   ("d1bita", ["bíta"], app1 d1bita)
  ]
- 
+
 

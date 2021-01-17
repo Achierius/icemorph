@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin composite definition
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -19,11 +19,11 @@
 
 module CompositeON where
 
-import General
-import BuildON
-import AttrON
+import           AttrON
+import           BuildON
+import           General
 
 oldnorseDecompose :: [Attr] -> Bool
 oldnorseDecompose    [x,y] = (x /= y) && atS == y
-oldnorseDecompose    [x] = True
-oldnorseDecompose    _   = False
+oldnorseDecompose    [x]   = True
+oldnorseDecompose    _     = False

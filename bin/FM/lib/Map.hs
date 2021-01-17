@@ -8,12 +8,12 @@ module Map (
 	    (|->++),  -- insertMany operator.
 	    (<+>),   -- union operator.
 	    maybeUpdate,
-	    flatten  -- 
+	    flatten  --
 	   ) where
-    
+
 -- A finite map implementation using red-black trees.
 
-import RedBlack
+import           RedBlack
 
 type Map key el = Tree key el
 

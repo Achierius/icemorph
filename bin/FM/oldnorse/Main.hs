@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin composite definition
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -19,11 +19,11 @@
 
 module Main where
 
-import CommonMain
-import CommandsON
-import CompositeON
-import DictON
-import Frontend
+import           CommandsON
+import           CommonMain
+import           CompositeON
+import           DictON
+import           Frontend
 
 main :: IO ()
 main = commonMain OldNorse

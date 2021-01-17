@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin internal dictionary
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -19,32 +19,32 @@
 
 module DictON where
 
-import BuildON
-import Dictionary
-import TypesON
+import           BuildON
+import           Dictionary
+import           TypesON
 
 oldnorseDict :: Dictionary
 oldnorseDict = dictionary $ nouns ++ verbs
-	
+
 nouns = [
     d1heimr "heimr",
-	d1songr "söngr",
-	d1kottr "köttr",
-	d1barn "barn",
-	d1nidr "niðr",
-	d2sjar "sjár",
-	d2sker "sker",
-	d1smjor "smjör",
-	d1kvadi "kvæði",
-	d1hirdir "hirðir",
-	d1nal "nál",
-	d1stod "stöð",
-	d1ben "ben",
-	d1heidr "heiðr",
-	d1gygr "gýgr",
-	d1stadr "staðr",
-	d1gestr "gestr",
-	d1naud "nauð",
+  	d1songr "söngr",
+  	d1kottr "köttr",
+  	d1barn "barn",
+  	d1nidr "niðr",
+  	d2sjar "sjár",
+  	d2sker "sker",
+  	d1smjor "smjör",
+  	d1kvadi "kvæði",
+  	d1hirdir "hirðir",
+  	d1nal "nál",
+  	d1stod "stöð",
+  	d1ben "ben",
+  	d1heidr "heiðr",
+  	d1gygr "gýgr",
+  	d1stadr "staðr",
+  	d1gestr "gestr",
+  	d1naud "nauð",
     d2holl "höll",
     d1ylgr "ylgr",
     d1fingr "fingr",
@@ -68,7 +68,7 @@ nouns = [
     d1elli "elli",
     d2iski "iski",
     d1gorsimi "görsimi"
-    ] 	
+    ]
 
 verbs = [
     d1elska "elska",

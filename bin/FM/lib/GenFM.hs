@@ -1,7 +1,7 @@
 module GenFM where
 
-import Char
-import List(intersperse)
+import           Data.Char
+import           Data.List (intersperse)
 
 type Name      = String -- generic name
 type Cons      = String -- constructor name
@@ -9,10 +9,10 @@ type Arg       = String -- constructur arguments
 type Lang      = String -- name of language
 
 type POS       = Data -- Parameter type for POS
-type Param     = Data -- Parameter type 
+type Param     = Data -- Parameter type
 type Data      = (Name,[(Cons,[Arg])])
 type Paradigm  = String -- A name of a paradigm
-type FunDef    = String -- The paradigm functions of 
+type FunDef    = String -- The paradigm functions of
 
 -- The main object type
 
@@ -60,19 +60,19 @@ fdef = unlines [
 
 test :: FM
 test = (testLang,testParam,testPos,testPara)
-	
+
 testLang  = "Latin"
 
-testParam = 	
+testParam =
     [
      ("Gender",zip ["Masc","Fem","Neu"] (repeat [])),
      ("Case",zip ["Nom", "Voc", "Acc"] (repeat [])),
      ("Number", zip ["Sing","Pl"] (repeat []))
     ]
-	     
+
 testPos =
     [("Noun",[("NF",["Case","Number"])])]
-    
+
 testPara = ["d1puella","d1poeta"]
 
 ---------------------------------------
@@ -110,7 +110,7 @@ prTypes fm =
 
 prParams :: [Param] -> String
 prParams pms = unlines $
-	       ["data " ++ name ++ " =\n" ++ prCons cs ++ 
+	       ["data " ++ name ++ " =\n" ++ prCons cs ++
 		"\n deriving (Show, Eq, Enum, Ord, Bounded)\n\n" ++
 		"instance Param " ++ name ++ " where values = enum\n"
                 | (name,cs) <- pms]
@@ -119,7 +119,7 @@ prParams pms = unlines $
 -- FIXME: Forgot to add Param definitions to POS.
 
 prPos :: [POS] -> String
-prPos = concat . map prP 
+prPos = concat . map prP
   where prP (name,xs) = unlines $
 			[
 			 "type " ++ name ++ " = " ++ name ++ "Form -> Str",
@@ -140,7 +140,7 @@ prRules :: FM -> FunDef -> (FilePath,String)
 prRules fm fd = let l = lang fm
 		    str =
 			unlines
-			[ 
+			[
 			 "module Rules" ++ l ++ " where",
 			 "",
 			 "import Types" ++ l,
@@ -151,11 +151,11 @@ prRules fm fd = let l = lang fm
 			 fd
 			 ]
 		    in ("Rules" ++ l ++ ".hs", str)
-		     
+
 prDict :: FM -> (FilePath,String)
 prDict fm = let l = lang fm
 		ll = map toLower l
-	        str = 
+	        str =
 		    unlines
 		    [
 		    "module Dict" ++ l ++ " where",

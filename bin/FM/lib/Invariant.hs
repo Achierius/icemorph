@@ -1,12 +1,12 @@
 module Invariant where
 
-import General
-import Dictionary
+import           Dictionary
+import           General
 
 data Invariant = Invariant
   deriving (Show,Eq,Enum,Ord,Bounded)
 
-instance Param Invariant 
+instance Param Invariant
     where values = enum
 
 instance Dict Invariant

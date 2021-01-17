@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin Dictionary definitions
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -18,8 +18,7 @@
 -}
 module AttrON where
 
-import General
+import           General
 
 atS :: Attr
 atS = 1
-

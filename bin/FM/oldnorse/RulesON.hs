@@ -1,4 +1,4 @@
-﻿{-
+{-
     Functional Morphology: Latin paradigm definitions
     Copyright (C) 2004  Author: Markus Forsberg
 
@@ -19,8 +19,8 @@
 
 module RulesON where
 
-import TypesON
-import General
+import           General
+import           TypesON
 
 {- Interface functions. -}
 
@@ -37,18 +37,18 @@ type Stem     = String
 {- noun masc u-stem    -}
 
 decl1kottr :: DictForm -> Noun
-decl1kottr köttr (NounForm n c) = 
-    mkStr $ 
+decl1kottr köttr (NounForm n c) =
+    mkStr $
       case n of
         Singular -> case c of
           Nominative -> köttr
-          Genitive -> kattar
-          Dative -> ketti
+          Genitive   -> kattar
+          Dative     -> ketti
           Accusative -> kött
         Plural -> case c of
           Nominative -> kettir
-          Genitive -> katta
-          Dative -> köttum
+          Genitive   -> katta
+          Dative     -> köttum
           Accusative -> köttu
   where
     kött = (tk 1 köttr)
@@ -58,10 +58,10 @@ decl1kottr köttr (NounForm n c) =
     katta = revertToStem kött ++ "a"
     köttum = u_mutation (revertToStem kött) ++ "um"
     köttu = u_mutation (revertToStem kött) ++ "u"
-    
-    
+
+
 {- noun masc a-stem    -}
-    
+
 decl1heimr :: DictForm -> Noun
 decl1heimr heimr (NounForm n c) =
     mkStr $
@@ -69,13 +69,13 @@ decl1heimr heimr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> heim
-          Genitive -> heims
-          Dative -> heimi
+          Genitive   -> heims
+          Dative     -> heimi
         Plural -> case c of
           Nominative -> heimar
           Accusative -> heima
-          Genitive -> heima
-          Dative -> heimum
+          Genitive   -> heima
+          Dative     -> heimum
   where
     (prefix, lexeme) = splitCompound heimr
     root = (tk 1 lexeme)
@@ -84,11 +84,11 @@ decl1heimr heimr (NounForm n c) =
     heimi = prefix ++ (syncope root ++ "i")
     heimar = prefix ++ (syncope root ++ "ar")
     heima = prefix ++ (syncope root ++ "a")
-    heimum = prefix ++ (u_mutation (syncope root) ++ "um")    
-    
-    
+    heimum = prefix ++ (u_mutation (syncope root) ++ "um")
+
+
 {- noun masc ja-stem -}
-    
+
 decl1nidr :: DictForm -> Noun
 decl1nidr niðr (NounForm n c) =
     mkStr $
@@ -96,13 +96,13 @@ decl1nidr niðr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> nið
-          Genitive -> niðs
-          Dative -> nið
+          Genitive   -> niðs
+          Dative     -> nið
         Plural -> case c of
           Nominative -> niðjar
           Accusative -> niðja
-          Genitive -> niðja
-          Dative -> niðjum
+          Genitive   -> niðja
+          Dative     -> niðjum
   where
     (prefix, lexeme) = splitCompound niðr
     root = (tk 1 lexeme)
@@ -110,8 +110,8 @@ decl1nidr niðr (NounForm n c) =
     niðs = prefix ++ root ++ "s"
     niðjar = prefix ++ (syncope root ++ "jar")
     niðja = prefix ++ (syncope root ++ "ja")
-    niðjum = prefix ++ (u_mutation (syncope root) ++ "jum")        
-    
+    niðjum = prefix ++ (u_mutation (syncope root) ++ "jum")
+
 
 {- noun masc ia-stem -}
 
@@ -122,13 +122,13 @@ decl1hirdir hirðir (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> hirði
-          Genitive -> hirðis
-          Dative -> hirði
+          Genitive   -> hirðis
+          Dative     -> hirði
         Plural -> case c of
           Nominative -> hirðar
           Accusative -> hirða
-          Genitive -> hirða
-          Dative -> hirðum
+          Genitive   -> hirða
+          Dative     -> hirðum
   where
     (prefix, lexeme) = splitCompound hirðir
     root = (tk 2 lexeme)
@@ -136,11 +136,11 @@ decl1hirdir hirðir (NounForm n c) =
     hirðis = prefix ++ root ++ "is"
     hirðar = prefix ++ (syncope root ++ "ar")
     hirða = prefix ++ (syncope root ++ "a")
-    hirðum = prefix ++ (u_mutation (syncope root) ++ "um")    
+    hirðum = prefix ++ (u_mutation (syncope root) ++ "um")
 
-    
+
 {- noun masc wa-stem -}
-    
+
 decl1songr :: DictForm -> Noun
 decl1songr söngr (NounForm n c) =
     mkStr $
@@ -148,13 +148,13 @@ decl1songr söngr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> söng
-          Genitive -> söngs
-          Dative -> söngvi
+          Genitive   -> söngs
+          Dative     -> söngvi
         Plural -> case c of
           Nominative -> söngvar
           Accusative -> söngva
-          Genitive -> söngva
-          Dative -> söngvum
+          Genitive   -> söngva
+          Dative     -> söngvum
   where
     (prefix, lexeme) = splitCompound söngr
     root = (tk 1 lexeme)
@@ -163,20 +163,20 @@ decl1songr söngr (NounForm n c) =
     söngvi = prefix ++ (syncope root ++ "vi")
     söngvar = prefix ++ (syncope root ++ "var")
     söngva = prefix ++ (syncope root ++ "va")
-    söngvum = prefix ++ (u_mutation (syncope root) ++ "vum")    
+    söngvum = prefix ++ (u_mutation (syncope root) ++ "vum")
 
 decl2sjar :: String -> Noun
-decl2sjar sjár nf =  
-    except (decl1songr sjár) 
+decl2sjar sjár nf =
+    except (decl1songr sjár)
            [(NounForm Singular Genitive, sjávar)] nf
-      where 
+      where
         (prefix, lexeme) = splitCompound sjár
-        root = (tk 1 lexeme)      
+        root = (tk 1 lexeme)
         sjávar = prefix ++ (syncope root ++ "var")
 
-        
-{- noun masc i-stem -}        
-        
+
+{- noun masc i-stem -}
+
 decl1stadr :: DictForm -> Noun
 decl1stadr staðr (NounForm n c) =
     mkStr $
@@ -184,13 +184,13 @@ decl1stadr staðr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> stað
-          Genitive -> staðar
-          Dative -> stað
+          Genitive   -> staðar
+          Dative     -> stað
         Plural -> case c of
           Nominative -> staðir
           Accusative -> staði
-          Genitive -> staða
-          Dative -> staðum
+          Genitive   -> staða
+          Dative     -> staðum
   where
     (prefix, lexeme) = splitCompound staðr
     root = (tk 1 lexeme)
@@ -199,8 +199,8 @@ decl1stadr staðr (NounForm n c) =
     staðir = prefix ++ (syncope root ++ "ir")
     staði = prefix ++ (syncope root ++ "i")
     staða = prefix ++ (syncope root ++ "a")
-    staðum = prefix ++ (u_mutation (syncope root) ++ "um")    
-    
+    staðum = prefix ++ (u_mutation (syncope root) ++ "um")
+
 decl1gestr :: DictForm -> Noun
 decl1gestr gestr (NounForm n c) =
     mkStr $
@@ -208,13 +208,13 @@ decl1gestr gestr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> gest
-          Genitive -> gests
-          Dative -> gest
+          Genitive   -> gests
+          Dative     -> gest
         Plural -> case c of
           Nominative -> gestir
           Accusative -> gesti
-          Genitive -> gesta
-          Dative -> gestum
+          Genitive   -> gesta
+          Dative     -> gestum
   where
     (prefix, lexeme) = splitCompound gestr
     root = (tk 1 lexeme)
@@ -223,11 +223,11 @@ decl1gestr gestr (NounForm n c) =
     gestir = prefix ++ (syncope root ++ "ir")
     gesti = prefix ++ (syncope root ++ "i")
     gesta = prefix ++ syncope root ++ velarJ root ++ "a"
-    gestum = prefix ++ u_mutation (syncope root) ++ velarJ root ++ "um"   
- 
- 
+    gestum = prefix ++ u_mutation (syncope root) ++ velarJ root ++ "um"
+
+
 {- noun masc c-stem -}
- 
+
 decl1fingr :: DictForm -> Noun
 decl1fingr fingr (NounForm n c) =
     mkStr $
@@ -235,26 +235,26 @@ decl1fingr fingr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> fingrs
-          Dative -> fingri
+          Genitive   -> fingrs
+          Dative     -> fingri
         Plural -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> fingra
-          Dative -> fingrum
+          Genitive   -> fingra
+          Dative     -> fingrum
   where
     (prefix, lexeme) = splitCompound fingr
     fingrs = prefix ++ lexeme ++ "s"
     fingri = prefix ++ syncope lexeme ++ "i"
     fingra = prefix ++ syncope lexeme ++ "a"
     fingrum = prefix ++ u_mutation (syncope lexeme) ++ "um"
-    
+
 decl2vetr :: String -> Noun
-decl2vetr vetr nf =  
-    except (decl1fingr vetr) 
+decl2vetr vetr nf =
+    except (decl1fingr vetr)
            [(NounForm Singular Genitive, vetrar)] nf
-      where 
-        (prefix, lexeme) = splitCompound vetr      
+      where
+        (prefix, lexeme) = splitCompound vetr
         vetrar = prefix ++ syncope lexeme ++ "ar"
 
 decl1fotr :: DictForm -> Noun
@@ -264,13 +264,13 @@ decl1fotr fótr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ root
-          Genitive -> fótar
-          Dative -> fóti
+          Genitive   -> fótar
+          Dative     -> fóti
         Plural -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> fóta
-          Dative -> fótum
+          Genitive   -> fóta
+          Dative     -> fótum
   where
     (prefix, lexeme) = splitCompound fótr
     root = tk 1 lexeme
@@ -278,8 +278,8 @@ decl1fotr fótr (NounForm n c) =
     fóti = prefix ++ syncope root ++ "i"
     fóta = prefix ++ syncope root ++ "a"
     fótum = prefix ++ u_mutation (syncope root) ++ "um"
-    
-    
+
+
 {- noun masc r-stem -}
 
 decl1fadir :: DictForm -> Noun
@@ -289,13 +289,13 @@ decl1fadir faðir (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> faður
-          Genitive -> faður
-          Dative -> faður
+          Genitive   -> faður
+          Dative     -> faður
         Plural -> case c of
           Nominative -> feðr
           Accusative -> feðr
-          Genitive -> feðra
-          Dative -> feðrum
+          Genitive   -> feðra
+          Dative     -> feðrum
   where
     (prefix, lexeme) = splitCompound faðir
     root = tk 2 lexeme
@@ -303,7 +303,7 @@ decl1fadir faðir (NounForm n c) =
     feðr = prefix ++ i_mutation (syncope root) ++ "r"
     feðra = prefix ++ i_mutation (syncope root) ++ "ra"
     feðrum = prefix ++ i_mutation (syncope root) ++ "rum"
-   
+
 
 {- noun masc nd-stem -}
 
@@ -314,13 +314,13 @@ decl1gefandi gefandi (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> gefanda
-          Genitive -> gefanda
-          Dative -> gefanda
+          Genitive   -> gefanda
+          Dative     -> gefanda
         Plural -> case c of
           Nominative -> gefendr
           Accusative -> gefendr
-          Genitive -> gefanda
-          Dative -> geföndum
+          Genitive   -> gefanda
+          Dative     -> geföndum
   where
     (prefix, lexeme) = splitCompound gefandi
     root = tk 1 lexeme
@@ -338,20 +338,20 @@ decl1timi tími (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> tíma
-          Genitive -> tíma
-          Dative -> tíma
+          Genitive   -> tíma
+          Dative     -> tíma
         Plural -> case c of
           Nominative -> tímar
           Accusative -> tíma
-          Genitive -> tíma
-          Dative -> tímum
+          Genitive   -> tíma
+          Dative     -> tímum
   where
     (prefix, lexeme) = splitCompound tími
     root = tk 1 lexeme
     tíma = prefix ++ syncope root ++ "a"
     tímar = prefix ++ syncope root ++ "ar"
     tímum = prefix ++ u_mutation (syncope root) ++ "um"
-   
+
 
 {- noun masc jan-stem -}
 
@@ -362,13 +362,13 @@ decl1bryti bryti (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> brytja
-          Genitive -> brytja
-          Dative -> brytja
+          Genitive   -> brytja
+          Dative     -> brytja
         Plural -> case c of
           Nominative -> brytjar
           Accusative -> brytja
-          Genitive -> brytja
-          Dative -> brytjum
+          Genitive   -> brytja
+          Dative     -> brytjum
   where
     (prefix, lexeme) = splitCompound bryti
     root = tk 1 lexeme
@@ -386,22 +386,22 @@ decl1vokvi vökvi (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> vökva
-          Genitive -> vökva
-          Dative -> vökva
+          Genitive   -> vökva
+          Dative     -> vökva
         Plural -> case c of
           Nominative -> vökvar
           Accusative -> vökva
-          Genitive -> vökva
-          Dative -> vökum
+          Genitive   -> vökva
+          Dative     -> vökum
   where
     (prefix, lexeme) = splitCompound vökvi
     root = tk 2 lexeme
     vökva = prefix ++ syncope root ++ "va"
     vökvar = prefix ++ syncope root ++ "var"
-    vökum = prefix ++ u_mutation (syncope root) ++ "um"   
-   
-   
-   
+    vökum = prefix ++ u_mutation (syncope root) ++ "um"
+
+
+
 
 {- noun neut a-stem    -}
 
@@ -412,34 +412,34 @@ decl1barn barn (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> barns
-          Dative -> barni
+          Genitive   -> barns
+          Dative     -> barni
         Plural -> case c of
           Nominative -> barn
           Accusative -> barn
-          Genitive -> barna
-          Dative -> börnum
+          Genitive   -> barna
+          Dative     -> börnum
   where
     (prefix, lexeme) = splitCompound barn
     root = lexeme
     barns = prefix ++ root ++ "s"
     barni = prefix ++ (syncope root ++ "i")
     barna = prefix ++ (syncope root ++ "a")
-    börnum = prefix ++ (u_mutation (syncope root) ++ "um")        
-    
+    börnum = prefix ++ (u_mutation (syncope root) ++ "um")
+
 
 {- noun neut ja-stem -}
 
 decl2sker :: String -> Noun
-decl2sker sker nf =  
-    except (decl1barn sker) 
+decl2sker sker nf =
+    except (decl1barn sker)
            [(NounForm Plural Genitive, skerja),
             (NounForm Plural Dative, skerjum)] nf
-      where 
+      where
         (prefix, lexeme) = splitCompound sker
-        root = lexeme      
-        skerja = prefix ++ (syncope root ++ "ja")    
-        skerjum = prefix ++ (u_mutation (syncope root) ++ "jum")    
+        root = lexeme
+        skerja = prefix ++ (syncope root ++ "ja")
+        skerjum = prefix ++ (u_mutation (syncope root) ++ "jum")
 
 
 {- noun neut ia-stem -}
@@ -451,20 +451,20 @@ decl1kvadi kvæði (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> prefix ++ lexeme ++ "s"
-          Dative -> prefix ++ lexeme
+          Genitive   -> prefix ++ lexeme ++ "s"
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> kvæða
-          Dative -> kvæðum
+          Genitive   -> kvæða
+          Dative     -> kvæðum
   where
     (prefix, lexeme) = splitCompound kvæði
     root = (tk 1 lexeme)
     kvæða = prefix ++ syncope root ++ velarJ root ++ "a"
     kvæðum = prefix ++ u_mutation (syncope root) ++ velarJ root ++ "um"
-    
-    
+
+
 {- noun neut wa-stem -}
 
 decl1smjor smjör (NounForm n c) =
@@ -473,34 +473,34 @@ decl1smjor smjör (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> smjörs
-          Dative -> smjörvi
+          Genitive   -> smjörs
+          Dative     -> smjörvi
         Plural -> case c of
           Nominative -> smjör
           Accusative -> smjör
-          Genitive -> smjörva
-          Dative -> smjörum
+          Genitive   -> smjörva
+          Dative     -> smjörum
   where
     (prefix, lexeme) = splitCompound smjör
     root = lexeme
     smjörs = prefix ++ root ++ "s"
     smjörvi = prefix ++ (syncope root ++ "vi")
     smjörva = prefix ++ (syncope root ++ "va")
-    smjörum = prefix ++ (u_mutation (syncope root) ++ "um")    
+    smjörum = prefix ++ (u_mutation (syncope root) ++ "um")
 
 
 {- noun neut an-stem -}
 
 decl2auga :: String -> Noun
-decl2auga auga nf =  
-    except (decl1timi auga) 
+decl2auga auga nf =
+    except (decl1timi auga)
            [(NounForm Plural Genitive, augna)] nf
-      where 
+      where
         (prefix, lexeme) = splitCompound auga
-        root = tk 1 lexeme      
-        augna = prefix ++ syncope root ++ "na"    
-   
-    
+        root = tk 1 lexeme
+        augna = prefix ++ syncope root ++ "na"
+
+
 {- noun fem o-stem -}
 
 decl1nal :: DictForm -> Noun
@@ -510,19 +510,19 @@ decl1nal nál (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> nálar
-          Dative -> prefix ++ lexeme
+          Genitive   -> nálar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> nálar
           Accusative -> nálar
-          Genitive -> nála
-          Dative -> nálum
+          Genitive   -> nála
+          Dative     -> nálum
   where
     (prefix, lexeme) = splitCompound nál
     root = lexeme
     nálar = prefix ++ (syncope root ++ "ar")
     nála = prefix ++ (syncope root ++ "a")
-    nálum = prefix ++ (u_mutation (syncope root) ++ "um")    
+    nálum = prefix ++ (u_mutation (syncope root) ++ "um")
 
 
 {- noun fem wo-stem -}
@@ -534,21 +534,21 @@ decl1stod stöð (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> stöðvar
-          Dative -> prefix ++ lexeme
+          Genitive   -> stöðvar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> stöðvar
           Accusative -> stöðvar
-          Genitive -> stöðva
-          Dative -> stöðum
+          Genitive   -> stöðva
+          Dative     -> stöðum
   where
     (prefix, lexeme) = splitCompound stöð
     root = lexeme
     stöðvar = prefix ++ (syncope root ++ "var")
     stöðva = prefix ++ (syncope root ++ "va")
-    stöðum = prefix ++ (u_mutation (syncope root) ++ "um")        
-    
-    
+    stöðum = prefix ++ (u_mutation (syncope root) ++ "um")
+
+
 {- noun fem jo-stem -}
 
 decl1ben :: DictForm -> Noun
@@ -558,23 +558,23 @@ decl1ben ben (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> benjar
-          Dative -> prefix ++ lexeme
+          Genitive   -> benjar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> benjar
           Accusative -> benjar
-          Genitive -> benja
-          Dative -> benjum
+          Genitive   -> benja
+          Dative     -> benjum
   where
     (prefix, lexeme) = splitCompound ben
     root = lexeme
     benjar = prefix ++ (syncope root ++ "jar")
     benja = prefix ++ (syncope root ++ "ja")
-    benjum = prefix ++ (u_mutation (syncope root) ++ "jum")        
+    benjum = prefix ++ (u_mutation (syncope root) ++ "jum")
 
 
-{- noun fem io-stem -}    
-    
+{- noun fem io-stem -}
+
 decl1heidr :: DictForm -> Noun
 decl1heidr heiðr (NounForm n c) =
     mkStr $
@@ -582,20 +582,20 @@ decl1heidr heiðr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> heiði
-          Genitive -> heiðar
-          Dative -> heiði
+          Genitive   -> heiðar
+          Dative     -> heiði
         Plural -> case c of
           Nominative -> heiðar
           Accusative -> heiðar
-          Genitive -> heiða
-          Dative -> heiðum
+          Genitive   -> heiða
+          Dative     -> heiðum
   where
     (prefix, lexeme) = splitCompound heiðr
     root = (tk 1 lexeme)
     heiði = prefix ++ (syncope root ++ "i")
     heiðar = prefix ++ (syncope root ++ "ar")
-    heiða = prefix ++ (syncope root ++ "a")    
-    heiðum = prefix ++ (u_mutation (syncope root) ++ "um")    
+    heiða = prefix ++ (syncope root ++ "a")
+    heiðum = prefix ++ (u_mutation (syncope root) ++ "um")
 
 decl1gygr :: DictForm -> Noun
 decl1gygr gýgr (NounForm n c) =
@@ -604,22 +604,22 @@ decl1gygr gýgr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> gýgi
-          Genitive -> gýgjar
-          Dative -> gýgi
+          Genitive   -> gýgjar
+          Dative     -> gýgi
         Plural -> case c of
           Nominative -> gýgjar
           Accusative -> gýgjar
-          Genitive -> gýgja
-          Dative -> gýgjum
+          Genitive   -> gýgja
+          Dative     -> gýgjum
   where
     (prefix, lexeme) = splitCompound gýgr
     root = (tk 1 lexeme)
     gýgi = prefix ++ (syncope root ++ "i")
     gýgjar = prefix ++ (syncope root ++ "jar")
-    gýgja = prefix ++ (syncope root ++ "ja")    
+    gýgja = prefix ++ (syncope root ++ "ja")
     gýgjum = prefix ++ (u_mutation (syncope root) ++ "jum")
 
-    
+
 {- noun fem i-stem -}
 
 decl1naud :: DictForm -> Noun
@@ -629,13 +629,13 @@ decl1naud nauð (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> nauðar
-          Dative -> prefix ++ lexeme
+          Genitive   -> nauðar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> nauðir
           Accusative -> nauðir
-          Genitive -> nauða
-          Dative -> nauðum
+          Genitive   -> nauða
+          Dative     -> nauðum
   where
     (prefix, lexeme) = splitCompound nauð
     nauðir = prefix ++ revertToStem lexeme ++ "ir"
@@ -644,12 +644,12 @@ decl1naud nauð (NounForm n c) =
     nauðum = prefix ++ u_mutation (syncope lexeme) ++ "um"
 
 decl2holl :: String -> Noun
-decl2holl höll nf =  
-    except (decl1naud höll) 
+decl2holl höll nf =
+    except (decl1naud höll)
            [(NounForm Singular Dative, höllu)] nf
-      where 
-        (prefix, lexeme) = splitCompound höll  
-        höllu = prefix ++ u_mutation (syncope lexeme) ++ "u"    
+      where
+        (prefix, lexeme) = splitCompound höll
+        höllu = prefix ++ u_mutation (syncope lexeme) ++ "u"
 
 
 decl1ylgr :: DictForm -> Noun
@@ -659,13 +659,13 @@ decl1ylgr ylgr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> ylgi
-          Genitive -> ylgjar
-          Dative -> ylgi
+          Genitive   -> ylgjar
+          Dative     -> ylgi
         Plural -> case c of
           Nominative -> ylgir
           Accusative -> ylgir
-          Genitive -> ylgja
-          Dative -> ylgjum
+          Genitive   -> ylgja
+          Dative     -> ylgjum
   where
     (prefix, lexeme) = splitCompound ylgr
     root = tk 1 lexeme
@@ -673,11 +673,11 @@ decl1ylgr ylgr (NounForm n c) =
     ylgjar = prefix ++ revertToStem root ++ velarJ root ++ "ar"
     ylgir = prefix ++ revertToStem root ++ "ir"
     ylgja = prefix ++ revertToStem root ++ velarJ root ++ "a"
-    ylgjum = prefix ++ u_mutation (syncope root) ++ velarJ root ++ "um"       
+    ylgjum = prefix ++ u_mutation (syncope root) ++ velarJ root ++ "um"
 
-    
-{- noun feminine c-stem -}    
-    
+
+{- noun feminine c-stem -}
+
 decl1bok :: DictForm -> Noun
 decl1bok bók (NounForm n c) =
     mkStr $
@@ -685,37 +685,37 @@ decl1bok bók (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> bókar
-          Dative -> prefix ++ lexeme
+          Genitive   -> bókar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> bœkr
           Accusative -> bœkr
-          Genitive -> bóka
-          Dative -> bókum
+          Genitive   -> bóka
+          Dative     -> bókum
   where
     (prefix, lexeme) = splitCompound bók
     bókar = prefix ++ syncope lexeme ++ "ar"
     bœkr = prefix ++ i_mutation lexeme ++ "r"
     bóka = prefix ++ syncope lexeme ++ "a"
     bókum = prefix ++ u_mutation (syncope lexeme) ++ "um"
-    
+
 decl2vik :: String -> Noun
-decl2vik vík nf =  
-    except (decl1bok vík) 
+decl2vik vík nf =
+    except (decl1bok vík)
            [(NounForm Singular Genitive, víkr)] nf
-      where 
-        (prefix, lexeme) = splitCompound vík  
-        víkr = prefix ++ lexeme ++ "r"    
-        
+      where
+        (prefix, lexeme) = splitCompound vík
+        víkr = prefix ++ lexeme ++ "r"
+
 decl2flo :: String -> Noun
-decl2flo fló nf =  
-    except (decl2vik fló) 
+decl2flo fló nf =
+    except (decl2vik fló)
            [(NounForm Plural Genitive, fló),
             (NounForm Plural Dative, flóm)] nf
-      where 
-        (prefix, lexeme) = splitCompound fló  
-        flóm = prefix ++ lexeme ++ "m"                
-  
+      where
+        (prefix, lexeme) = splitCompound fló
+        flóm = prefix ++ lexeme ++ "m"
+
 
 decl1kyr :: DictForm -> Noun
 decl1kyr kýr (NounForm n c) =
@@ -724,13 +724,13 @@ decl1kyr kýr (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> ký
-          Genitive -> prefix ++ lexeme
-          Dative -> ký
+          Genitive   -> prefix ++ lexeme
+          Dative     -> ký
         Plural -> case c of
           Nominative -> kiumr
           Accusative -> kiumr
-          Genitive -> ký
-          Dative -> kým
+          Genitive   -> ký
+          Dative     -> kým
   where
     (prefix, lexeme) = splitCompound kýr
     root = tk 1 lexeme
@@ -742,11 +742,11 @@ decl1kyr kýr (NounForm n c) =
 {- noun feminine r-stem -}
 
 decl2dottir :: String -> Noun
-decl2dottir dóttir nf =  
-    except (decl1fadir dóttir) 
+decl2dottir dóttir nf =
+    except (decl1fadir dóttir)
            [] nf
-    
- 
+
+
 {- noun feminine on-stem -}
 
 decl1tunga :: DictForm -> Noun
@@ -756,24 +756,24 @@ decl1tunga tunga (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> tungu
-          Genitive -> tungu
-          Dative -> tungu
+          Genitive   -> tungu
+          Dative     -> tungu
         Plural -> case c of
           Nominative -> tungur
           Accusative -> tungur
-          Genitive -> tungna
-          Dative -> tungum
+          Genitive   -> tungna
+          Dative     -> tungum
   where
     (prefix, lexeme) = splitCompound tunga
     root = tk 1 lexeme
     tungu = prefix ++ syncope root ++ "u"
     tungur = prefix ++ syncope root ++ "ur"
-    tungna = prefix ++ syncope root ++ "na"   
+    tungna = prefix ++ syncope root ++ "na"
     tungum = prefix ++ syncope root ++ "um"
-    
-    
-{- noun feminine jon-stem -}    
-    
+
+
+{- noun feminine jon-stem -}
+
 decl1brynja :: DictForm -> Noun
 decl1brynja brynja (NounForm n c) =
     mkStr $
@@ -781,30 +781,30 @@ decl1brynja brynja (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> brynju
-          Genitive -> brynju
-          Dative -> brynju
+          Genitive   -> brynju
+          Dative     -> brynju
         Plural -> case c of
           Nominative -> brynjur
           Accusative -> brynjur
-          Genitive -> prefix ++ lexeme
-          Dative -> brynjum
+          Genitive   -> prefix ++ lexeme
+          Dative     -> brynjum
   where
     (prefix, lexeme) = splitCompound brynja
     root = tk 2 lexeme
     brynju = prefix ++ syncope root ++ "ju"
     brynjur = prefix ++ syncope root ++ "jur"
-    brynjum = prefix ++ syncope root ++ "jum"   
-    
+    brynjum = prefix ++ syncope root ++ "jum"
+
 decl2kirkja :: String -> Noun
-decl2kirkja kirkja nf =  
-    except (decl1brynja kirkja) 
+decl2kirkja kirkja nf =
+    except (decl1brynja kirkja)
            [(NounForm Plural Genitive, kirkna)] nf
-      where 
+      where
         (prefix, lexeme) = splitCompound kirkja
-        root = tk 2 lexeme        
-        kirkna = prefix ++ syncope root ++ "na"    
-    
-    
+        root = tk 2 lexeme
+        kirkna = prefix ++ syncope root ++ "na"
+
+
 {- noun feminine won-stem -}
 
 decl1volva :: DictForm -> Noun
@@ -814,23 +814,23 @@ decl1volva völva (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> völu
-          Genitive -> völu
-          Dative -> völu
+          Genitive   -> völu
+          Dative     -> völu
         Plural -> case c of
           Nominative -> völur
           Accusative -> völur
-          Genitive -> prefix ++ lexeme
-          Dative -> völum
+          Genitive   -> prefix ++ lexeme
+          Dative     -> völum
   where
     (prefix, lexeme) = splitCompound völva
     root = tk 2 lexeme
     völu = prefix ++ syncope root ++ "u"
     völur = prefix ++ syncope root ++ "ur"
-    völum = prefix ++ syncope root ++ "um"     
+    völum = prefix ++ syncope root ++ "um"
 
 
-{- noun feminine in-stem -}    
-    
+{- noun feminine in-stem -}
+
 decl1elli :: DictForm -> Noun
 decl1elli elli (NounForm n c) =
     mkStr $
@@ -838,26 +838,26 @@ decl1elli elli (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> prefix ++ lexeme
-          Dative -> prefix ++ lexeme
+          Genitive   -> prefix ++ lexeme
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> na
           Accusative -> na
-          Genitive -> na
-          Dative -> na
+          Genitive   -> na
+          Dative     -> na
   where
     (prefix, lexeme) = splitCompound elli
-    na = "n/a"     
+    na = "n/a"
 
 decl2iski :: String -> Noun
-decl2iski iski nf =  
-    except (decl1elli iski) 
+decl2iski iski nf =
+    except (decl1elli iski)
            [(NounForm Singular Genitive, iskjar)] nf
-      where 
+      where
         (prefix, lexeme) = splitCompound iski
-        root = tk 1 lexeme        
-        iskjar = prefix ++ syncope root ++ "jar"        
-    
+        root = tk 1 lexeme
+        iskjar = prefix ++ syncope root ++ "jar"
+
 decl1gorsimi :: DictForm -> Noun
 decl1gorsimi görsimi (NounForm n c) =
     mkStr $
@@ -865,13 +865,13 @@ decl1gorsimi görsimi (NounForm n c) =
         Singular -> case c of
           Nominative -> prefix ++ lexeme
           Accusative -> prefix ++ lexeme
-          Genitive -> görsimjar
-          Dative -> prefix ++ lexeme
+          Genitive   -> görsimjar
+          Dative     -> prefix ++ lexeme
         Plural -> case c of
           Nominative -> görsimar
           Accusative -> görsimar
-          Genitive -> görsima
-          Dative -> görsimum
+          Genitive   -> görsima
+          Dative     -> görsimum
   where
     (prefix, lexeme) = splitCompound görsimi
     root = tk 1 lexeme
@@ -880,13 +880,13 @@ decl1gorsimi görsimi (NounForm n c) =
     görsima = prefix ++ syncope root ++ "a"
     görsimum = prefix ++ u_mutation (syncope root) ++ "um"
 
-    
-    
-    
-    
-    
-    
-        
+
+
+
+
+
+
+
 syncope :: String -> String
 syncope man = synced
     where
@@ -898,11 +898,11 @@ syncope man = synced
        | post == "ul" && not (isVowelString middle) = pre ++ middle ++ "l"
        | post == "un" && not (isVowelString middle) = pre ++ middle ++ "n"
 {-       | post == "ar" && not (isVowelString middle) && not (isUCConsonant fL) = pre ++ middle ++ "r" -}
-       | post == "ar" && not (isVowelString middle) = pre ++ middle ++ "r"       
+       | post == "ar" && not (isVowelString middle) = pre ++ middle ++ "r"
        | post == "an" && not (isVowelString middle) = pre ++ middle ++ "n"
        | otherwise = pre ++ middle ++ post
 
-findSyncopeEnding :: String -> (String, String, String) 
+findSyncopeEnding :: String -> (String, String, String)
 findSyncopeEnding premiddlepost = (reverse erp, middle, reverse tsop)
     where
       (tsop, elddimerp) = splitAt 2 $ reverse premiddlepost
@@ -913,7 +913,7 @@ isVowelString a = elem a ["a", "e", "i", "o", "u", "y", "ö", "ó", "ø", "á", 
 
 isVowel c = elem c "aeiouyöóøáí"
 
-excisionConsonant :: (String, String) -> String 
+excisionConsonant :: (String, String) -> String
 excisionConsonant (beg, end) = be ++ delCons ge ++ nd
     where
       (be, ge, nd) = lastFirst (beg, end)
@@ -922,19 +922,19 @@ excisionConsonant (beg, end) = be ++ delCons ge ++ nd
         "rr" -> "r"
         _    -> x
 
-lastFirst :: (String, String) -> (String, String, String) 
+lastFirst :: (String, String) -> (String, String, String)
 lastFirst (stem, end) = (ste, me, nd)
     where
       (ste, m) = lastLetter stem
       (e, nd) = firstLetter end
       me = m ++ e
 
-lastLetter :: String -> (String, String) 
+lastLetter :: String -> (String, String)
 lastLetter be = (reverse b, e)
     where
-      (e, b) = splitAt 1 $ reverse be 
+      (e, b) = splitAt 1 $ reverse be
 
-firstLetter :: String -> (String, String) 
+firstLetter :: String -> (String, String)
 firstLetter be = (b, e)
     where
       (b, e) = splitAt 1 $ be
@@ -946,7 +946,7 @@ u_mutation man = m ++ mkUm a ++ n
       mkUm v = case v of
         "a" -> "ö"
         _   -> v
-        
+
 i_mutation :: String -> String
 i_mutation man = m ++ mkUm a ++ n
     where
@@ -954,8 +954,8 @@ i_mutation man = m ++ mkUm a ++ n
       mkUm v = case v of
         "a" -> "e"
         "ó" -> "œ"
-        _   -> v        
-  
+        _   -> v
+
 reverseIMutation :: String -> String
 reverseIMutation man = m ++ mkUm a ++ n
     where
@@ -963,22 +963,22 @@ reverseIMutation man = m ++ mkUm a ++ n
       mkUm v = case v of
         "e" -> "a"
         "œ" -> "ó"
-        _   -> v        
+        _   -> v
 
 changeStemVowel :: (String, String) -> String
 changeStemVowel (man,new) = m ++ new ++ n
     where
       (m,a,n) = findStemVowel man
 
-        
+
 revertToStem :: String -> String
 revertToStem man = m ++ mkUm a ++ n
     where
       (m,a,n) = findStemVowel man
       mkUm v = case v of
         "ö" -> "a"
-        _   -> v        
-      
+        _   -> v
+
 findStemVowel :: String -> (String, String, String)
 findStemVowel sprick = (reverse rps, reverse i, reverse kc)
     where
@@ -990,14 +990,14 @@ findSyncopVowel :: String -> (String, String, String)
 findSyncopVowel sprick = (reverse rps, reverse i, reverse kc)
     where
       (kc, irps) = splitAt 1 $ reverse sprick
-      (i, rps) = span isVowel $ irps 
-      
+      (i, rps) = span isVowel $ irps
+
 splitCompound :: String -> (String, String)
 splitCompound word = (prefix, reverse lexeme)
     where
       (lexeme, prehyp) = break ('-'==) $ reverse word
       (prefix, hyphen) = break ('-'==) $ reverse prehyp
-      
+
 velarJ :: String -> String
 velarJ root = addJ lletter
     where
@@ -1013,23 +1013,23 @@ isVelar a = elem a ["g", "k"]
 
 dropV :: String -> String
 dropV stem = (ste ++ delV m)
-    where 
+    where
       (ste,m) = lastLetter stem
       delV x = case x of
         "v" -> ""
         _   -> x
-        
+
 dropJ :: String -> String
 dropJ stem = (ste ++ dropJ m)
-    where 
+    where
       (ste,m) = lastLetter stem
       dropJ x = case x of
         "j" -> ""
-        _   -> x        
-        
+        _   -> x
+
 getPreteriteRoot :: String -> String
 getPreteriteRoot stem = (ste ++ pretsuf m)
-    where 
+    where
       (ste,m) = lastLetter stem
       pretsuf x = case x of
         "m" -> "md"
@@ -1038,8 +1038,8 @@ getPreteriteRoot stem = (ste ++ pretsuf m)
         "s" -> "st"
         "p" -> "pt"
         "ð" -> "dd"
-        _   -> x ++ "ð"     
-        
+        _   -> x ++ "ð"
+
 
 
 {- weak class I    -}
@@ -1049,7 +1049,7 @@ decl1elska elska vf =
   case vf of
    Infinitive v ->
      mkStr $
-       case v of 
+       case v of
          Active -> lexeme
          Middle -> lexeme ++ "sk"
    PresentParticiple v ->
@@ -1061,31 +1061,31 @@ decl1elska elska vf =
      mkStr $
        case v of
          Active -> lexeme ++ "ðr"
-         Middle -> lexeme ++ "zk"    
+         Middle -> lexeme ++ "zk"
    Impera2sg v ->
      mkStr $
        case v of
          Active -> lexeme
-         Middle -> lexeme ++ "sk"    
+         Middle -> lexeme ++ "sk"
    Impera1pl v ->
      mkStr $
        case v of
          Active -> dropV(u_mutation (syncope root)) ++ "um"
-         Middle -> dropV(u_mutation (syncope root)) ++ "umk"    
+         Middle -> dropV(u_mutation (syncope root)) ++ "umk"
    Impera2pl v ->
      mkStr $
        case v of
          Active -> dropJ(root) ++ "ið"
-         Middle -> dropJ(root) ++ "izk"             
+         Middle -> dropJ(root) ++ "izk"
    Indicative v n p t ->
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme
                      P2 -> lexeme ++ "r"
                      P3 -> lexeme ++ "r"
@@ -1093,11 +1093,11 @@ decl1elska elska vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "um"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> lexeme      
+                     P3 -> lexeme
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme ++ "ða"
                      P2 -> lexeme ++ "ðir"
                      P3 -> lexeme ++ "ði"
@@ -1107,11 +1107,11 @@ decl1elska elska vf =
                      P2 -> dropV(u_mutation (syncope root)) ++ "uðuð"
                      P3 -> dropV(u_mutation (syncope root)) ++ "uðu"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> lexeme ++ "sk"
                      P3 -> lexeme ++ "sk"
@@ -1119,11 +1119,11 @@ decl1elska elska vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> lexeme ++ "sk"    
+                     P3 -> lexeme ++ "sk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "uðumk"
                      P2 -> lexeme ++ "ðisk"
                      P3 -> lexeme ++ "ðisk"
@@ -1136,11 +1136,11 @@ decl1elska elska vf =
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme
                      P2 -> dropJ(root) ++ "ir"
                      P3 -> dropJ(root) ++ "i"
@@ -1148,11 +1148,11 @@ decl1elska elska vf =
                    case p of
                      P1 -> dropJ(root) ++ "im"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> dropJ(root) ++ "i"     
+                     P3 -> dropJ(root) ++ "i"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme ++ "ða"
                      P2 -> lexeme ++ "ðir"
                      P3 -> lexeme ++ "ði"
@@ -1162,11 +1162,11 @@ decl1elska elska vf =
                      P2 -> lexeme ++ "ðið"
                      P3 -> lexeme ++ "ði"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> dropJ(root) ++ "isk"
                      P3 -> dropJ(root) ++ "isk"
@@ -1174,11 +1174,11 @@ decl1elska elska vf =
                    case p of
                      P1 -> dropJ(root) ++ "imk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> dropJ(root) ++ "isk"    
+                     P3 -> dropJ(root) ++ "isk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "uðumk"
                      P2 -> lexeme ++ "ðisk"
                      P3 -> lexeme ++ "ðisk"
@@ -1220,10 +1220,10 @@ decl1stodva stöðva vf =
             (Optative Middle Plural P3 Past, na)] vf
        where
          na = "n/a"
-         
+
 decl1spa :: String -> Verb
 decl1spa spá vf =
-    except (decl1elska spá) 
+    except (decl1elska spá)
            [(Impera2pl Middle, lexeme ++ "ið"),
             (Impera1pl Active, lexeme ++ "m"),
             (Impera1pl Middle, lexeme ++ "mk"),
@@ -1242,15 +1242,15 @@ decl1spa spá vf =
        where
          lexeme = spá
 
-         
-{- weak class II verbs -}         
+
+{- weak class II verbs -}
 
 decl1krefja :: String -> Verb
 decl1krefja krefja vf =
   case vf of
    Infinitive v ->
      mkStr $
-       case v of 
+       case v of
          Active -> lexeme
          Middle -> root ++ "sk"
    PresentParticiple v ->
@@ -1262,31 +1262,31 @@ decl1krefja krefja vf =
      mkStr $
        case v of
          Active -> root_pret_reverse_i ++ "r"
-         Middle -> root ++ "zk"    
+         Middle -> root ++ "zk"
    Impera2sg v ->
      mkStr $
        case v of
          Active -> root
-         Middle -> root ++ "sk"    
+         Middle -> root ++ "sk"
    Impera1pl v ->
      mkStr $
        case v of
          Active -> dropV(u_mutation (syncope root)) ++ "um"
-         Middle -> dropV(u_mutation (syncope root)) ++ "umk"    
+         Middle -> dropV(u_mutation (syncope root)) ++ "umk"
    Impera2pl v ->
      mkStr $
        case v of
          Active -> dropJ(root) ++ "ið"
-         Middle -> dropJ(root) ++ "izk"             
+         Middle -> dropJ(root) ++ "izk"
    Indicative v n p t ->
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root
                      P2 -> root ++ "r"
                      P3 -> root ++ "r"
@@ -1294,11 +1294,11 @@ decl1krefja krefja vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "jum"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> lexeme     
+                     P3 -> lexeme
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root_pret_reverse_i ++ "a"
                      P2 -> root_pret_reverse_i ++ "ir"
                      P3 -> root_pret_reverse_i ++ "i"
@@ -1308,11 +1308,11 @@ decl1krefja krefja vf =
                      P2 -> dropV(u_mutation (syncope root_pret_reverse_i)) ++ "uð"
                      P3 -> dropV(u_mutation (syncope root_pret_reverse_i)) ++ "u"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "jumk"
                      P2 -> root ++ "sk"
                      P3 -> lexeme ++ "sk"
@@ -1320,11 +1320,11 @@ decl1krefja krefja vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "jumk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> lexeme ++ "sk"    
+                     P3 -> lexeme ++ "sk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root_pret_reverse_i)) ++ "umk"
                      P2 -> root_pret ++ "isk"
                      P3 -> root_pret ++ "isk"
@@ -1337,11 +1337,11 @@ decl1krefja krefja vf =
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme
                      P2 -> dropJ(root) ++ "ir"
                      P3 -> dropJ(root) ++ "i"
@@ -1349,11 +1349,11 @@ decl1krefja krefja vf =
                    case p of
                      P1 -> dropJ(root) ++ "im"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> dropJ(root) ++ "i"     
+                     P3 -> dropJ(root) ++ "i"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root_pret ++ "a"
                      P2 -> root_pret ++ "ir"
                      P3 -> root_pret ++ "i"
@@ -1363,11 +1363,11 @@ decl1krefja krefja vf =
                      P2 -> root_pret ++ "ið"
                      P3 -> root_pret ++ "i"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "jumk"
                      P2 -> dropJ(root) ++ "isk"
                      P3 -> dropJ(root) ++ "isk"
@@ -1375,11 +1375,11 @@ decl1krefja krefja vf =
                    case p of
                      P1 -> dropJ(root) ++ "imk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> dropJ(root) ++ "isk"    
+                     P3 -> dropJ(root) ++ "isk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root_pret)) ++ "umk"
                      P2 -> root_pret ++ "isk"
                      P3 -> root_pret ++ "isk"
@@ -1424,8 +1424,8 @@ decl1lyja lýja vf =
             (Optative Middle Plural P3 Past, na)] vf
        where
          na = "n/a"
-         
-         
+
+
 {- strong class I verbs -}
 
 decl1bita :: String -> Verb
@@ -1433,7 +1433,7 @@ decl1bita bíta vf =
   case vf of
    Infinitive v ->
      mkStr $
-       case v of 
+       case v of
          Active -> lexeme
          Middle -> lexeme ++ "sk"
    PresentParticiple v ->
@@ -1445,31 +1445,31 @@ decl1bita bíta vf =
      mkStr $
        case v of
          Active -> lexeme ++ "ðr"
-         Middle -> lexeme ++ "zk"    
+         Middle -> lexeme ++ "zk"
    Impera2sg v ->
      mkStr $
        case v of
          Active -> lexeme
-         Middle -> lexeme ++ "sk"    
+         Middle -> lexeme ++ "sk"
    Impera1pl v ->
      mkStr $
        case v of
          Active -> dropV(u_mutation (syncope root)) ++ "um"
-         Middle -> dropV(u_mutation (syncope root)) ++ "umk"    
+         Middle -> dropV(u_mutation (syncope root)) ++ "umk"
    Impera2pl v ->
      mkStr $
        case v of
          Active -> dropJ(root) ++ "ið"
-         Middle -> dropJ(root) ++ "izk"             
+         Middle -> dropJ(root) ++ "izk"
    Indicative v n p t ->
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root
                      P2 -> root ++ "r"
                      P3 -> root ++ "r"
@@ -1477,11 +1477,11 @@ decl1bita bíta vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "um"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> lexeme      
+                     P3 -> lexeme
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root_pastsg
                      P2 -> root_pastsg ++ "ðir"
                      P3 -> root_pastsg
@@ -1491,11 +1491,11 @@ decl1bita bíta vf =
                      P2 -> dropV(u_mutation (syncope root_pastpl)) ++ "uð"
                      P3 -> dropV(u_mutation (syncope root_pastpl)) ++ "u"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> lexeme ++ "zk"
                      P3 -> lexeme ++ "zk"
@@ -1503,11 +1503,11 @@ decl1bita bíta vf =
                    case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> lexeme ++ "sk"    
+                     P3 -> lexeme ++ "sk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root_pastpl)) ++ "umk"
                      P2 -> root_pastsg ++ "zk"
                      P3 -> root_pastsg ++ "zk"
@@ -1520,11 +1520,11 @@ decl1bita bíta vf =
      mkStr $
        case v of
          Active ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> lexeme
                      P2 -> dropJ(root) ++ "ir"
                      P3 -> dropJ(root) ++ "i"
@@ -1532,11 +1532,11 @@ decl1bita bíta vf =
                    case p of
                      P1 -> dropJ(root) ++ "im"
                      P2 -> dropJ(root) ++ "ið"
-                     P3 -> dropJ(root) ++ "i"     
+                     P3 -> dropJ(root) ++ "i"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> root_pastpl ++ "a"
                      P2 -> root_pastpl ++ "ir"
                      P3 -> root_pastpl ++ "i"
@@ -1546,11 +1546,11 @@ decl1bita bíta vf =
                      P2 -> root_pastpl ++ "ið"
                      P3 -> root_pastpl ++ "i"
          Middle ->
-           case t of 
+           case t of
              Present ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root)) ++ "umk"
                      P2 -> dropJ(root) ++ "isk"
                      P3 -> dropJ(root) ++ "isk"
@@ -1558,11 +1558,11 @@ decl1bita bíta vf =
                    case p of
                      P1 -> dropJ(root) ++ "imk"
                      P2 -> dropJ(root) ++ "izk"
-                     P3 -> dropJ(root) ++ "isk"    
+                     P3 -> dropJ(root) ++ "isk"
              Past ->
                case n of
                  Singular ->
-                   case p of 
+                   case p of
                      P1 -> dropV(u_mutation (syncope root_pastpl)) ++ "umk"
                      P2 -> root_pastpl ++ "isk"
                      P3 -> root_pastpl ++ "isk"
@@ -1576,4 +1576,4 @@ decl1bita bíta vf =
     root = tk 1 lexeme
     root_pastsg = changeStemVowel(root,"ei")
     root_pastpl = changeStemVowel(root,"i")
-         
+
