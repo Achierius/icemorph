@@ -194,7 +194,7 @@ sortAssocs = mergesort (\(a,_) -> \(b,_) -> compare a b)
         EQ -> case xs of
             [z] -> merge cmp ((a,z:ys):xss) yss
             zs  -> merge cmp ((a,zs++ys):xss) yss
-            _   -> x : merge cmp    xss (y:yss)
+        _  -> x : merge cmp    xss (y:yss)
 
 {-
 sortAssocs :: [(String,(Attr,String))] -> [(String,[(Attr,String)])]

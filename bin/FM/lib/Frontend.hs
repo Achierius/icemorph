@@ -47,7 +47,7 @@ parseCommand l s =
    case words s of
     (x:xs) -> case paradigms l ! x of
                Nothing -> Bad $ "Error: Command not found [" ++ s ++ "]"
-               Just (ys,f) -> if (length xs == length ys) then
+               Just (ys,f) -> if length xs == length ys then
                            Ok $ f xs
                                else
                                  Bad $ "Error: wrong number of arguments [" ++ s ++ "]"
@@ -75,7 +75,7 @@ process l h xs =
     hIsEOF h >>= \b ->
         if b then return xs
            else
-            do s   <- hGetLine h
+            do s <- seq h (hGetLine h)
                res <- collect s xs
                process l h res
  where
@@ -86,10 +86,10 @@ process l h xs =
                     Ok e  -> return (e:pre)
                     Bad s -> do prErr s
                                 return pre
-  isComment           [] = False
-  isComment     (' ':xs) = isComment xs
+  isComment []           = False
+  isComment (' ':xs)     = isComment xs
   isComment ('-':'-':xs) = True
-  isComment            _ = False
+  isComment _            = False
 
 -- Application of lists to functions
 

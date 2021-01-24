@@ -11,6 +11,7 @@ import           Print
 import           System.Environment (getArgs, getEnv)
 import           System.IO
 import           System.IO.Error    (catchIOError)
+import           System.IO.Strict   as Strict
 import           Trie
 
 gfTypes :: Language a => a -> String
@@ -93,7 +94,7 @@ commonMain l = do
                                help
 
 run :: (String -> [[String]]) -> IO ()
-run f =  interact $ unlines . analyze (f) . nWords
+run f = Strict.interact $ unlines . analyze (f) . nWords
 
 analyze :: (String -> [[String]]) -> [String] -> [String]
 analyze _  []  = []

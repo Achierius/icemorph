@@ -5,8 +5,8 @@
 
 module GeneralIO where
 
-import           Data.List  (nub)
-import           Data.Maybe (fromJust)
+import           Data.List        (nub)
+import           Data.Maybe       (fromJust)
 import           Dictionary
 import           ErrM
 import           Frontend
@@ -14,6 +14,7 @@ import           General
 import           Map
 import           Print
 import           System.IO
+import           System.IO.Strict as Strict
 import           Trie
 
 type Stem      = String
@@ -202,7 +203,7 @@ infMode l
 
 
 imode :: Language a => a  -> IO()
-imode l = interact (concat . map f . lines)
+imode l = Strict.interact (concat . map f . lines)
   where f s =
          case (words s) of
           (x:xs) -> do case (parseCommand l (unwords (x:xs))) of
