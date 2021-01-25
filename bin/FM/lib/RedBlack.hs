@@ -1,12 +1,12 @@
 module RedBlack (
                 emptyTree,
-		isEmptyTree,
-		Tree,
-		lookupTree,
-		insertTree,
-		maybeUpdate,
-		flatten
-		) where
+                isEmptyTree,
+                Tree,
+                lookupTree,
+                insertTree,
+                maybeUpdate,
+                flatten
+                ) where
 
 -- Modified version of Osanaki's implementation.
 
@@ -58,5 +58,5 @@ maybeUpdate  key el f tree = T B a y b
 
 flatten :: Tree a b -> [(a,b)]
 flatten E = []
-flatten (T _ left (key,e) right)
-  = (flatten left) ++ ((key,e):(flatten right))
+flatten $ T _ left (key,e) right
+  = flatten left ++ (key,e) : flatten right

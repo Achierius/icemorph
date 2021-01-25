@@ -35,7 +35,7 @@ noComp = 0
 
 mkStr :: String -> Str
 mkStr     [] = Str []
-mkStr (x:xs) = Str [(x:xs)]
+mkStr (x:xs) = Str [x:xs]
 
 unStr :: Str -> [String]
 unStr (Str xs) = xs
@@ -93,13 +93,13 @@ changes cs s = case lookupMark s cs of
     []  -> []
  where
    lookupMark _ [] = Nothing
-   lookupMark st ((b,e):ms) =
-     if isPrefixOf b st then Just (b,e) else lookupMark st ms
+   lookupMark st ((b, e):ms) =
+     if b `isPrefixOf` st then Just (b, e) else lookupMark st ms
 
 -- change in the beginning of a morpheme only
 changePref ::  [(String,String)] -> String -> String
 changePref cs t = case cs of
-  (s,r) : rs | isPrefixOf s t -> r ++ drop (length s) t
+  (s, r) : rs | s `isPrefixOf` t -> r ++ drop (length s) t
              | otherwise -> changePref rs t
   _ -> t
 
@@ -107,8 +107,8 @@ changePref cs t = case cs of
 
 except :: Param a => Finite a -> [(a,String)] -> Finite a
 except f es p = case (lookup p [(a,mkStr s) | (a,s) <- es]) of
-		 Nothing -> f p
-		 Just s  -> s
+                 Nothing -> f p
+                 Just s  -> s
 
 -- exception with multiple variants
 excepts :: Param a => Finite a -> [(a,Str)] -> Finite a
@@ -120,13 +120,13 @@ missing f as = excepts f [(a,nonExist) | a <- as]
 
 -- the only forms
 only :: Param a => Finite a -> [a] -> Finite a
-only f as = missing f [a | a <- values, notElem a as]
+only f as = missing f [a | a <- values, a `notElem` as]
 
 -- added variants
 variants :: Param a => Finite a -> [(a,String)] -> Finite a
 variants f es p = case lookup p [(a,s) | (a,s) <- es] of
-		   Nothing -> f p
-		   Just s -> strings (s: (unStr (f p)))
+                   Nothing -> f p
+                   Just s  -> strings (s: unStr (f p))
 
 -- a form that is missing
 nonExist :: Str

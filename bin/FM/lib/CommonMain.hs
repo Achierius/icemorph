@@ -2,7 +2,7 @@ module CommonMain where
 
 import           Control.Monad
 import           Data.Char
-import           Data.List          (intersperse)
+import           Data.List          (intercalate, intersperse)
 import           Dictionary
 import           ErrM
 import           Frontend
@@ -36,27 +36,27 @@ commonMain :: Language a => a -> IO ()
 commonMain l = do
   xx <- getArgs
   lex <- catchIOError (getEnv (env l)) (\_ ->
-   do prErr $ "\n[" ++ (env l) ++ " is undefined, using \"./" ++ (dbaseName l) ++ "\".]\n"
-      return $ "./" ++ (dbaseName l))
+   do prErr $ "\n[" ++ env l ++ " is undefined, using \"./" ++ dbaseName l ++ "\".]\n"
+      return $ "./" ++ dbaseName l)
   case xx of
     []             -> do prErr $ welcome l
                          t <- readTrie l lex
                          run (analysis t (composition l))
     ["-h"]         -> help
     ["-s"]         -> do prErr $ welcome l
-                         putStrLn $ "\n[Synthesiser mode]\n"
-                         putStrLn $ "Enter a " ++ (uName l) ++ " word in any form.\n"
-                         putStrLn $ "If the word is not found, a [command] with [arguments].\n"
-                         putStrLn $ "Type 'c' to list commands.\n"
-                         putStrLn $ "Type 'q' to quit.\n"
+                         putStrLn "\n[Synthesiser mode]\n"
+                         putStrLn $ "Enter a " ++ uName l ++ " word in any form.\n"
+                         putStrLn "If the word is not found, a [command] with [arguments].\n"
+                         putStrLn "Type 'c' to list commands.\n"
+                         putStrLn "Type 'q' to quit.\n"
                          theDictionary <- readDict l lex
                          trieDictL     <- readTrie l lex
                          synthesiser l theDictionary trieDictL
     ["-i"]         -> do prErr $ welcome l
-                         putStrLn $ "\n[Inflection mode]\n"
-                         putStrLn $ "Enter [command] [dictionary form].\n"
-                         putStrLn $ "Type 'c' to list commands.\n"
-                         putStrLn $ "Type 'q' to quit.\n"
+                         putStrLn "\n[Inflection mode]\n"
+                         putStrLn "Enter [command] [dictionary form].\n"
+                         putStrLn "Type 'c' to list commands.\n"
+                         putStrLn "Type 'q' to quit.\n"
                          infMode l
     ["-ib"]         -> do prErr $ welcome l
                           imode l
@@ -94,25 +94,25 @@ commonMain l = do
                                help
 
 run :: (String -> [[String]]) -> IO ()
-run f = Strict.interact $ unlines . analyze (f) . nWords
+run f = Strict.interact $ unlines . analyze f . nWords
 
 analyze :: (String -> [[String]]) -> [String] -> [String]
 analyze _  []  = []
 analyze f (s:ss)
- = case (f s) of
+ = case f s of
     [] -> ("[ <" ++ s ++ "> NONE]") : analyze f ss
     xs -> ("[ <" ++ s ++ ">") : (prA xs ++  "]") : analyze f ss
  where
        prA xs = unlines [show n ++ ". " ++ s | (n,s) <- zip [1..] (map pr xs)]
        pr []  = []
        pr [x] = x
-       pr xs  = "Composite: " ++ concat (intersperse " | " xs)
+       pr xs  = "Composite: " ++ intercalate " | " xs
 
 welcome :: Language a => a -> String
 welcome l = unlines
             [
              "********************************************",
-             "* " ++ uName l ++ " Morphology" ++ (padding (uName l) 30) ++ "*",
+             "* " ++ uName l ++ " Morphology" ++ padding (uName l) 30 ++ "*",
              "********************************************",
              "* Functional Morphology v1.10              *",
              "* (c) Markus Forsberg & Aarne Ranta 2004   *",
@@ -128,10 +128,8 @@ prInfo dict = prErr $ "Dictionary loaded: DF = " ++ show (size dict) ++ " and WF
 
 
 help :: IO()
-help = prErr help_text
-
-help_text :: String
-help_text = unlines ["",
+help = prErr . unlines $
+                    ["",
                      " |---------------------------------------|",
                      " |        Program parameters             |",
                      " |---------------------------------------|",
@@ -157,7 +155,7 @@ help_text = unlines ["",
                      " | -lexc   [file] | LexC source code     |",
                      " | -xfst   [file] | XFST source code     |",
                      " | -sql    [file] | SQL source code      |",
-                            " |---------------------------------------|",
+                     " |---------------------------------------|",
                      ""
                     ]
 

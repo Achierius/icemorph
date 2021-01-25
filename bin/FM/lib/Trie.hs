@@ -16,19 +16,19 @@ type SATrie = AttrTrie String
 -------------------------------------------------
 
 mTable :: Trie a -> Map Char (Trie a)
-mTable (Trie (m,_)) = m
+mTable (Trie (m, _)) = m
 
 val :: Trie a -> [a]
-val (Trie (_,v)) = v
+val (Trie (_, v)) = v
 
 addVal :: Trie a -> [a] -> Trie a
-addVal (Trie (m,v)) v1 = (Trie (m,v++v1))
+addVal (Trie (m, v)) v1 = Trie (m, v ++ v1)
 
 emptyTrie :: Trie a
-emptyTrie = Trie (empty,[])
+emptyTrie = Trie (empty, [])
 
 trie :: Map Char (Trie a) -> [a] -> Trie a
-trie m val = Trie (m,val)
+trie m val = Trie (m, val)
 
 ---------------------------------------------------
 
@@ -36,8 +36,8 @@ tcompile :: [(String, [a])] -> Trie a
 tcompile = foldl (flip insert) emptyTrie
 
 insert :: (String,[a]) -> Trie a -> Trie a
-insert ([],ys)     t = addVal t ys
-insert ((c:cs),ys) t =
+insert ([], ys)     t = addVal t ys
+insert (c : cs, ys) t =
   case mTable t ! c of
    Just t' -> case insert (cs,ys) t' of
                tr -> trie ((c,tr) |-> mTable t) (val t)
@@ -67,7 +67,7 @@ collapse t = collapse' t []
 decompose :: AttrTrie a -> ([Attr] -> Bool) -> String -> [[(Attr,a)]]
 decompose trie _  [] = []
 decompose trie f sentence =
-    concat $ map (legal trie f) $ deconstruct trie sentence
+    concatMap (legal trie f) $ deconstruct trie sentence
 
 -- backtrack [(sentence,[])] trie
 

@@ -20,8 +20,9 @@ module Dictionary (Dict(..),
            nWords
           ) where
 
+import           Data.Bifunctor (first)
 import           Data.Char
-import           Data.List (group, sortBy)
+import           Data.List      (group, sortBy)
 import           General
 
 -- untyped dictionary: dictionary word, category, inherent features, inflection
@@ -69,7 +70,7 @@ prTableW :: Param a => Table a -> [(String,(Attr,Str))]
 prTableW t = [ (a,(noComp,s)) | (a,s) <- prTable t]
 
 prTable :: Param a => Table a -> Table String
-prTable = map (\ (a,b) -> (prValue a, b))
+prTable = map (first prValue)
 
 unDict :: Dictionary -> [Entry]
 unDict (Dict xs) = xs
@@ -172,7 +173,7 @@ tree2list (BT z left right) = tree2list left ++ [z] ++ tree2list right
 -- This function is a key function of FM, so optimizations
 -- are essential.
 sortAssocs :: [(String,(Attr,String))] -> [(String,[(Attr,String)])]
-sortAssocs = mergesort (\(a,_) -> \(b,_) -> compare a b)
+sortAssocs = mergesort (\(a,_) (b,_) -> compare a b)
   where
     mergesort cmp = mergesort' cmp . map wrap
 

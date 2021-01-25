@@ -1,15 +1,15 @@
 module Map (
             Map,
             empty,
-	    (!),     -- lookup operator.
-	    (!+),    -- lookupMany operator.
-	    (|->),   -- insert operator.
-	    (|->+),  -- insertMany operator.
-	    (|->++),  -- insertMany operator.
-	    (<+>),   -- union operator.
-	    maybeUpdate,
-	    flatten  --
-	   ) where
+            (!),     -- lookup operator.
+            (!+),    -- lookupMany operator.
+            (|->),   -- insert operator.
+            (|->+),  -- insertMany operator.
+            (|->++),  -- insertMany operator.
+            (<+>),   -- union operator.
+            maybeUpdate,
+            flatten  --
+           ) where
 
 -- A finite map implementation using red-black trees.
 
@@ -35,22 +35,22 @@ fm ! e = lookupTree e fm
 
 (!+) :: Ord key => Map key el -> [key] -> [Maybe el]
 _  !+    []  = []
-fm !+ (e:es) = (lookupTree e fm): (fm !+ es)
+fm !+ (e:es) = lookupTree e fm : (fm !+ es)
 
 (|->) :: Ord key => (key,el) -> Map key el -> Map key el
-(x,y) |-> fm = insertTree (x,y) fm
+(x,y) |-> fm = insertTree (x, y) fm
 
-(|->+) :: Ord key => [(key,el)] -> Map key el -> Map key el
+(|->+) :: Ord key => [(key, el)] -> Map key el -> Map key el
 []         |->+ fm = fm
-((x,y):xs) |->+ fm = xs |->+ (insertTree (x,y) fm)
+((x,y):xs) |->+ fm = xs |->+ insertTree (x, y) fm
 
 --(|->+++) :: Ord key => [(key,[el])] -> Map key [el] -> Map key [el]
 --[]         |->+++ fm = fm
 --((x,y):xs) |->+++ fm = xs |->+++ (maybeUpdate x y (y++) fm)
 
-(|->++) :: Ord key => [(key,el)] -> Map key [el] -> Map key [el]
+(|->++) :: Ord key => [(key, el)] -> Map key [el] -> Map key [el]
 []         |->++ fm = fm
-((x,y):xs) |->++ fm = xs |->++ (maybeUpdate x y (y:) fm)
+((x, y) : xs) |->++ fm = xs |->++ maybeUpdate x y (y:) fm
 
 (<+>) :: Ord key => Map key el -> Map key el -> Map key el
 (<+>) fm1 fm2 =  xs |->+ fm2

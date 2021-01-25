@@ -164,18 +164,18 @@ synthesiser l dict trie =
   do
     synt trie $ [((s1,n),(c,xs,t)) | ((s1,c,xs,t),n) <- zip (unDict dict) [0..]] |->++ Map.empty
  where synt trie table =
-        do hPutStr stdout "> "
+        do putStr "> "
            hFlush stdout
-           s <- hGetLine stdin
+           s <- getLine
            case words s of
              ["q"] -> return()
              ["c"] -> do putStrLn $ unlines (paradigmNames l)
                          synt trie table
              []  -> synt trie table
-             [w] -> case(lookupStem trie w) of
+             [w] -> case (lookupStem trie w) of
                [] -> do putStrLn $ "Word '" ++ w ++ "' not in the lexicon."
                         synt trie table
-               xs   -> do putStrLn $ "\n" ++ (prDictionary (dictionary (nub (concat (map (lsynt table) xs)))))
+               xs   -> do putStrLn $ "\n" ++ prDictionary (dictionary (nub (concatMap (lsynt table) xs)))
                           synt trie table
              x:xs -> case (parseCommand l (unwords (x:xs))) of
                             Bad s -> do putStrLn s
@@ -189,11 +189,11 @@ infMode l
         = do putStr "> "
              hFlush stdout
              s <- getLine
-             case (words s) of
+             case words s of
               ["q"] -> putStrLn "Session ended."
               ["c"] -> do putStrLn $ unlines (paradigmNames l)
                           infMode l
-              (x:xs) -> do case (parseCommand l (unwords (x:xs))) of
+              x:xs  -> do case (parseCommand l (unwords (x:xs))) of
                             Bad s -> do putStrLn s
                                         infMode l
                             Ok e  -> do putStrLn $ prDictionary $ dictionary [e]
@@ -203,12 +203,12 @@ infMode l
 
 
 imode :: Language a => a  -> IO()
-imode l = Strict.interact (concat . map f . lines)
+imode l = Strict.interact (concatMap f . lines)
   where f s =
          case (words s) of
-          (x:xs) -> do case (parseCommand l (unwords (x:xs))) of
-                        Bad s -> s
-                        Ok e  -> unlines
-                                 ["[" ++ unwords (x:xs) ++ "]",
-                                  prDictionary $ dictionary [e]]
-          _     -> do "Invalid format. Write: [command] [dictionary form]"
+           x:xs -> do case (parseCommand l (unwords (x:xs))) of
+                         Bad s -> s
+                         Ok e  -> unlines
+                                  ["[" ++ unwords (x:xs) ++ "]",
+                                   prDictionary $ dictionary [e]]
+           _     -> do "Invalid format. Write: [command] [dictionary form]"

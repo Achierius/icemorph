@@ -95,31 +95,31 @@ process l h xs =
 
 app1 :: (String -> Entry) -> [String] -> Entry
 app1 f [x] = f x
-app1 _ _   = error $ "app1: wrong number of arguments"
+app1 _ _   = error "app1: wrong number of arguments"
 
 app2 :: (String -> String -> Entry) -> [String] -> Entry
 app2 f [x,y] = f x y
-app2 _ _     = error $ "app2: wrong number of arguments"
+app2 _ _     = error "app2: wrong number of arguments"
 
 app3 :: (String -> String -> String -> Entry) -> [String] -> Entry
 app3 f [x,y,z] = f x y z
-app3 _ _       = error $ "app3: wrong number of arguments"
+app3 _ _       = error "app3: wrong number of arguments"
 
 app4 :: (String -> String -> String -> String -> Entry) -> [String] -> Entry
 app4 f [x,y,z,w] = f x y z w
-app4 _ _         = error $ "app4: wrong number of arguments"
+app4 _ _         = error "app4: wrong number of arguments"
 
 app5 :: (String -> String -> String -> String -> String -> Entry) -> [String] -> Entry
 app5 f [x,y,z,w,a] = f x y z w a
-app5 _ _           = error $ "app5: wrong number of arguments"
+app5 _ _           = error "app5: wrong number of arguments"
 
 app6 :: (String -> String -> String -> String -> String -> String -> Entry) -> [String] -> Entry
 app6 f [x,y,z,w,a,b] = f x y z w a b
-app6 _ _             = error $ "app6: wrong number of arguments"
+app6 _ _             = error "app6: wrong number of arguments"
 
 app7 :: (String -> String -> String -> String -> String -> String -> String -> Entry) -> [String] -> Entry
 app7 f [x,y,z,w,a,b,c] = f x y z w a b c
-app7 _ _               = error $ "app7: wrong number of arguments"
+app7 _ _               = error "app7: wrong number of arguments"
 
 prErr :: String -> IO()
 prErr s =  hPutStr stderr (s ++ "\n")

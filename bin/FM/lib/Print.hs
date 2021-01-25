@@ -1,13 +1,13 @@
 module Print where
 
-import           Data.List  (intersperse)
+import           Data.List  (intercalate, intersperse)
 import           Dictionary
 import           General
 
 -- printing morphological objects as strings
 
 prStr :: Str -> String
-prStr = concat . intersperse "/" . unStr
+prStr = intercalate "/" . unStr
 
 prAlts :: Str -> String
 prAlts ss =
@@ -30,7 +30,7 @@ putFun = putStr . unlines . map pr . prTable . table where
 
 -- print a parameter value without hierarchy (= parentheses)
 prFlat :: String -> String
-prFlat = filter (flip notElem "()")
+prFlat = filter (`notElem` "()")
 
 -- show all values for the first parameter
 prFirstForm :: Param a => Table a -> String
@@ -51,7 +51,7 @@ prDictionary = unlines . map (unlines . prOne) . removeAttr where
                              [a ++ ": " ++ prStr s | (a,s) <- infl]
 
 prFullFormLex :: FullFormLex -> String
-prFullFormLex = concat . map prOne where
+prFullFormLex = concatMap prOne where
   prOne (s,ps) = unlines [s ++ ":" ++ a | a <- map prAttr ps]
   -- prOne (s,ps) = s ++ " : " ++ unwords (intersperse "/" (map prAttr ps))
   prAttr (a,ss) = ss ++ prCompAttr a
@@ -167,7 +167,7 @@ prXML d =  "<?xml version=\"1.0\"?>\n" ++ (render (tag "lexicon" (concat (map (u
  prEntry (stem,_,inhs,tbl) = tag "lexicon_entry" $ tagA1 "dictionary_form" ("value",stem) :(prInh inhs ++ prTabl tbl)
  prInh inhs = map (\s -> tagA1 "inherent" ("value",s)) inhs
  prTabl tbl = tag "inflection_table" $
-	      concat [tagA "inflection_form" ("pos",a) (map (\s -> tagA1 "variant" ("word",s)) (unStr b)) | (a,b) <- existingForms tbl]
+              concat [tagA "inflection_form" ("pos",a) (map (\s -> tagA1 "variant" ("word",s)) (unStr b)) | (a,b) <- existingForms tbl]
 
 -- code for Xerox LexC
 
@@ -200,7 +200,7 @@ prXFSTRules cat entries = unlines $
   where
     prEntry (stem,_,inhs,tbl) =
       concat (intersperse "  |\n" (map (prForm stem inhs)
-				   ([(a,unStr b) | (a,b) <- existingForms tbl])))
+                                   ([(a,unStr b) | (a,b) <- existingForms tbl])))
     prForm stem inhs (a,b) =
       "  [ {" ++ stem ++ "}" ++ prTags (a:inhs) ++ " .x. " ++ altsXFST b ++"]"
     prTags ts =
@@ -251,11 +251,11 @@ type DatabaseName = String
 prSqlSchema :: Dictionary-> DatabaseName -> String
 prSqlSchema dict dname =
                     "\n-- The Morphology Schema.\n\n" ++
-		    "DROP DATABASE IF EXISTS " ++ dname ++ ";\n" ++
-		    "CREATE DATABASE " ++  dname ++ ";\n" ++
-		    "USE " ++ dname ++ ";\n\n" ++
-		    lexicon ++
-		    "GRANT ALL PRIVILEGES ON " ++ dname ++".* TO PUBLIC ; \n\n"
+                    "DROP DATABASE IF EXISTS " ++ dname ++ ";\n" ++
+                    "CREATE DATABASE " ++  dname ++ ";\n" ++
+                    "USE " ++ dname ++ ";\n\n" ++
+                    lexicon ++
+                    "GRANT ALL PRIVILEGES ON " ++ dname ++".* TO PUBLIC ; \n\n"
 
 -- A instance needs to:
 -- * Be put in the lexicon with a unique identifier
@@ -268,8 +268,7 @@ prSQL = (lexicon ++) . unlines . map prSql . zip [1..] . removeAttr
   prSql (i,(stem, cat, inh, table)) = lexic i stem  cat (expand table inh)
   lexic i stem cat t =
                  unlines [insert "LEXICON" [show i,stem,cat,b,a] | (a,b) <- t]
-  expand table inh = [(a ++ " - " ++ (unwords inh) ,s) | (a,b) <- table,
-			                                         s <- unStr b]
+  expand table inh = [(a ++ " - " ++ unwords inh, s) | (a,b) <- table, s <- unStr b]
 
 {-
 prWordsCl ::  [(String,[((Int,String),[String])])] -> [String]
@@ -282,7 +281,7 @@ prWordsCl ((c,((n1,w1),as1):xs):xss)
 innerNumber :: [(a,[(b,[c])])] -> Int -> [(a,[((Int,b),[c])])]
 innerNumber [] _ = []
 innerNumber ((a,xs):xss) n = (a,number xs n) :
-			     innerNumber xss (n+(length xs))
+                             innerNumber xss (n+(length xs))
  where number xs n = zipWith f [n..] xs
        f n (s,zs) = ((n,s),zs)
 -}
@@ -294,7 +293,7 @@ emptyE = "NULL"
 
 insert :: TableS -> [Value] -> Element
 insert t vs = "INSERT INTO " ++ t ++ " VALUES ('"
-	      ++ (concat (intersperse "','" vs)) ++"');"
+              ++ intercalate "','" vs ++"');"
 
 type Name           = String
 type Type           = String
@@ -306,7 +305,7 @@ primaryKey n = "PRIMARY KEY (" ++ n ++ ")"
 
 foreignKey :: Name -> (Name,Name) -> Constraint
 foreignKey n (n1,n2) = "FOREIGN (" ++ n ++ ") REFERENCES " ++
-		       n1 ++ "(" ++ n2 ++ ")"
+                       n1 ++ "(" ++ n2 ++ ")"
 
 varchar :: Int -> Type
 varchar n = "VARCHAR(" ++ show n ++ ")"
@@ -320,17 +319,17 @@ notNull = "NOT NULL"
 createTable :: Name -> [(Name,Type,TypeConstraint)] -> [Constraint] -> TableS
 createTable n xs cs =
     "CREATE TABLE " ++ n ++ "\n(\n" ++
-    (concat ((intersperse ",\n" [n ++ " " ++ t ++ " " ++ tc | (n,t,tc) <- xs])))
-    ++ concat (intersperse ",\n" cs) ++ ");\n\n"
+    intercalate ",\n" [n ++ " " ++ t ++ " " ++ tc | (n,t,tc) <- xs]
+    ++ intercalate ",\n" cs ++ ");\n\n"
 
 lexicon :: TableS
 lexicon = createTable "LEXICON"
-	  [
-	   ("ID", intType, notNull),
-	   ("DICTIONARY",varchar wordLength,notNull),
-	   ("CLASS",varchar wordLength,notNull),
-	   ("WORD",varchar wordLength,notNull),
-	   ("POS",varchar wordLength,notNull)
+          [
+           ("ID", intType, notNull),
+           ("DICTIONARY",varchar wordLength,notNull),
+           ("CLASS",varchar wordLength,notNull),
+           ("WORD",varchar wordLength,notNull),
+           ("POS",varchar wordLength,notNull)
           ] []
 
 
