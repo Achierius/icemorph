@@ -58,5 +58,5 @@ maybeUpdate  key el f tree = T B a y b
 
 flatten :: Tree a b -> [(a,b)]
 flatten E = []
-flatten $ T _ left (key,e) right
+flatten (T _ left (key,e) right)
   = flatten left ++ (key,e) : flatten right
