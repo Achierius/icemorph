@@ -1,5 +1,5 @@
 module Dictionary (Dict(..),
-           Dictionary,
+           Dictionary(..),
            Entry,
            prTable,
            removeAttr,
@@ -14,7 +14,6 @@ module Dictionary (Dict(..),
            unDict,
            size,
            sizeW,
-           unionDictionary,
            emptyDict,
            dict2fullform,
            nWords
@@ -23,6 +22,8 @@ module Dictionary (Dict(..),
 import           Data.Bifunctor (first)
 import           Data.Char
 import           Data.List      (group, sortBy)
+import           Data.Monoid
+import           Data.Semigroup
 import           General
 
 -- untyped dictionary: dictionary word, category, inherent features, inflection
@@ -38,6 +39,11 @@ class Param a => Dict a where
   attrException = const []
 
 data Dictionary       = Dict [Entry]
+instance Semigroup Dictionary where
+  (<>) = unionDictionary
+instance Monoid Dictionary where
+  mempty = emptyDict
+
 type Dictionary_Word  = String
 type Category         = String
 type Inherent         = String

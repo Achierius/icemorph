@@ -20,7 +20,7 @@ gfTypes l = "types." ++ name l ++ ".gf"
 readDict :: Language a => a -> FilePath -> IO Dictionary
 readDict l f =
   do database <- parseDict l f
-     return $ unionDictionary (internDict l) database
+     return $ database <> internDict l
 
 readTrie :: Language a => a -> FilePath -> IO SATrie
 readTrie l f = do d <- readDict l f
