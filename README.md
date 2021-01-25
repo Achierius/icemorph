@@ -1,7 +1,7 @@
 icemorph
 ========
 
-Code for Icemorph
+Implementation of natural language morphology for the Icelandic Language in Haskell.
 
 
 == HMM + RESTRICTED VITERBI
