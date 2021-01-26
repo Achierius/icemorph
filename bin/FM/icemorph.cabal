@@ -2,17 +2,17 @@ cabal-version:       3.0
 -- Build system docs: http://haskell.org/cabal/users-guide/
 
 name:                icemorph
-version:             0.1.0.0
+version:             0.2.1.0
 -- synopsis:
 -- description:
 -- bug-reports:
 -- license:
 license-file:        LICENSE
 author:              Marcus Plutowski
-maintainer:          achierius@gmail.com
+maintainer:          achierius@berkeley.com
 -- copyright:
 -- category:
-extra-source-files:  CHANGELOG.md
+extra-source-files:
 
 common core-details
   default-language:    Haskell2010
@@ -48,12 +48,8 @@ common on-modules
                        RulesON
                        TypesON
 
-executable FM
+executable icemorph
   import:              core-details,
                        lib-modules,
                        on-modules
   main-is:             Main.hs
-  -- other-extensions:
-
---executable Clean
---  import:              co
