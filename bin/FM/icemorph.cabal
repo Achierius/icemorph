@@ -1,0 +1,60 @@
+cabal-version:       3.0
+-- Build system docs: http://haskell.org/cabal/users-guide/
+
+name:                icemorph
+version:             0.1.0.0
+-- synopsis:
+-- description:
+-- bug-reports:
+-- license:
+license-file:        LICENSE
+author:              Marcus Plutowski
+maintainer:          achierius@gmail.com
+-- copyright:
+-- category:
+extra-source-files:  CHANGELOG.md
+
+common core-details
+  default-language:    Haskell2010
+  hs-source-dirs:      oldnorse
+                       lib
+                       tools
+  build-depends:       base == 4.14.*,
+                       strict >= 0.4,
+                       deepseq >= 1.3
+
+common lib-modules
+  other-modules:
+                       CommonMain
+                       Dictionary
+                       ErrM
+                       Frontend
+                       General
+                       GeneralIO
+                       GenFM
+                       Invariant
+                       Map
+                       Print
+                       RedBlack
+                       Trie
+                       UTF8
+
+common on-modules
+  other-modules:
+                       AttrON
+                       BuildON
+                       CommandsON
+                       CompositeON
+                       DictON
+                       RulesON
+                       TypesON
+
+executable FM
+  import:              core-details,
+                       lib-modules,
+                       on-modules
+  main-is:             Main.hs
+  -- other-extensions:
+
+--executable Clean
+--  import:              co
