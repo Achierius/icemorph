@@ -5,6 +5,7 @@
 
 module GeneralIO where
 
+import           Control.Monad
 import           Data.List        (nub)
 import           Data.Maybe       (fromJust)
 import           Dictionary
@@ -178,10 +179,10 @@ synthesiser l dict trie =
                xs   -> do putStrLn $ "\n" ++ prDictionary (dictionary (nub (concatMap (lsynt table) xs)))
                           synt trie table
              x:xs -> case (parseCommand l (unwords (x:xs))) of
-                            Bad s -> do putStrLn s
-                                        synt trie table
-                            Ok e  -> do putStrLn $ prDictionary $ dictionary [e]
-                                        synt trie table
+                            Left s -> do putStrLn s
+                                         synt trie table
+                            Right e  -> do putStrLn $ prDictionary $ dictionary [e]
+                                           synt trie table
 
        lsynt table (s,n) = nub [(s,b,c,d) | (b,c,d) <-  fromJust (table ! (s,n))]
 infMode :: Language a => a  -> IO()
@@ -194,10 +195,10 @@ infMode l
               ["c"] -> do putStrLn $ unlines (paradigmNames l)
                           infMode l
               x:xs  -> do case (parseCommand l (unwords (x:xs))) of
-                            Bad s -> do putStrLn s
-                                        infMode l
-                            Ok e  -> do putStrLn $ prDictionary $ dictionary [e]
-                                        infMode l
+                            Left s -> do putStrLn s
+                                         infMode l
+                            Right e  -> do putStrLn $ prDictionary $ dictionary [e]
+                                           infMode l
               _     -> do putStrLn "Give [command] [dictionary form]"
                           infMode l
 
@@ -207,8 +208,8 @@ imode l = Strict.interact (concatMap f . lines)
   where f s =
          case (words s) of
            x:xs -> do case (parseCommand l (unwords (x:xs))) of
-                         Bad s -> s
-                         Ok e  -> unlines
-                                  ["[" ++ unwords (x:xs) ++ "]",
-                                   prDictionary $ dictionary [e]]
+                         Left s -> s
+                         Right e  -> unlines
+                                     ["[" ++ unwords (x:xs) ++ "]",
+                                     prDictionary $ dictionary [e]]
            _     -> do "Invalid format. Write: [command] [dictionary form]"

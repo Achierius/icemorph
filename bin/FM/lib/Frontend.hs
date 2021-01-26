@@ -2,6 +2,7 @@
 
 module Frontend where
 
+import           Control.Monad
 import           Data.Char
 import           Data.Maybe       (isJust)
 import           Dictionary
@@ -47,12 +48,12 @@ parseCommand :: Language a => a -> String -> Err Entry
 parseCommand l s =
    case words s of
     (x:xs) -> case paradigms l ! x of
-               Nothing -> Bad $ "Error: Command not found [" ++ s ++ "]"
+               Nothing -> Left $ "Error: Command not found [" ++ s ++ "]"
                Just (ys,f) -> if length xs == length ys then
-                           Ok $ f xs
+                           Right $ f xs
                                else
-                                 Bad $ "Error: wrong number of arguments [" ++ s ++ "]"
-    _ -> Bad $ "Error: Invalid command [" ++ s ++ "]"
+                                 Left $ "Error: wrong number of arguments [" ++ s ++ "]"
+    _ -> Left $ "Error: Invalid command [" ++ s ++ "]"
 
 paradigmNames :: Language a => a -> [String]
 paradigmNames l = [ c ++ " " ++ unwords args | (c,(args,_)) <- flatten (paradigms l)]
@@ -85,9 +86,9 @@ process l (c:cs) xs = do res <- collect c xs
   collect xs@(c:s) pre
    | isComment xs = return pre
    | otherwise   = case parseCommand l xs of
-                    Ok e  -> return (e:pre)
-                    Bad s -> do prErr s
-                                return pre
+                    Right e -> return (e:pre)
+                    Left s  -> do prErr s
+                                  return pre
   isComment []           = False
   isComment (' ':xs)     = isComment xs
   isComment ('-':'-':xs) = True

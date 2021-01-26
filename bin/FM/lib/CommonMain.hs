@@ -4,7 +4,6 @@ import           Control.Monad
 import           Data.Char
 import           Data.List          (intercalate, intersperse)
 import           Dictionary
-import           ErrM
 import           Frontend
 import           GeneralIO
 import           Print

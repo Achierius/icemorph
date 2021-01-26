@@ -37,7 +37,6 @@ common lib-modules
                        Print
                        RedBlack
                        Trie
-                       UTF8
 
 common on-modules
   other-modules:
