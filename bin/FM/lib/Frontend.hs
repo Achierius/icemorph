@@ -3,13 +3,14 @@
 module Frontend where
 
 import           Data.Char
-import           Data.Maybe      (isJust)
+import           Data.Maybe       (isJust)
 import           Dictionary
 import           ErrM
 import           General
 import           Map
 import           System.IO
-import           System.IO.Error (catchIOError)
+import           System.IO.Error  (catchIOError)
+import           System.IO.Strict as Strict
 
 -- A class defined to be able to construct a language independent frontend
 
@@ -66,18 +67,19 @@ parseDict l f =
 isParadigm :: Language a => a -> String -> Bool
 isParadigm l s = isJust $ paradigms l ! s
 
+
 readdict :: Language a => a -> FilePath -> IO [Entry]
 readdict l f = do h <- openFile f ReadMode
-                  process l h []
+                  c <- Strict.hGetContents h
+                  rv <- process l (lines c) []
+                  hClose h
+                  return rv
 
-process :: Language a => a -> Handle -> [Entry] -> IO [Entry]
-process l h xs =
-    hIsEOF h >>= \b ->
-        if b then return xs
-           else
-            do s <- seq h (hGetLine h)
-               res <- collect s xs
-               process l h res
+
+process :: Language a => a -> [String] -> [Entry] -> IO [Entry]
+process _ [] xs = return xs
+process l (c:cs) xs = do res <- collect c xs
+                         process l cs res
  where
   collect []     pre = return xs
   collect xs@(c:s) pre
