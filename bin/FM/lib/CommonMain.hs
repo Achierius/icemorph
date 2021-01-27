@@ -2,24 +2,91 @@ module CommonMain where
 
 import           Control.Monad
 import           Data.Char
-import           Data.List          (intercalate, intersperse)
+import           Data.List           (intercalate, intersperse)
+import           Data.Semigroup
 import           Dictionary
 import           Frontend
 import           GeneralIO
+import           Options.Applicative
 import           Print
-import           System.Environment (getArgs, getEnv)
+import           System.Environment  (getArgs, getEnv)
 import           System.IO
-import           System.IO.Error    (catchIOError)
-import           System.IO.Strict   as Strict
+import           System.IO.Error     (catchIOError)
+import           System.IO.Strict    as Strict
 import           Trie
+
+
+data ProgramMode
+    = SynthMode
+    | InflMode
+    | InflBatchMode
+    | LexMode
+    | WriteLexicon
+    | WriteTables
+    | WriteGF
+    | WriteGFR
+    | WriteLatex
+  deriving (Show, Eq)
+data Flags
+  = SimpleFlags
+      { mode :: ProgramMode
+      }
+  | FileFlags
+      { mode :: ProgramMode
+      , file :: Maybe String
+      }
+
+
+
+parseCoreFlags :: Parser ProgramMode
+parseCoreFlags =
+    flag' SynthMode (long "synthesize" <> short 's' <> help "Interactive synthesizer mode") <|>
+    flag' InflMode (long "inflection" <> short 'i' <> help "Interactive inflection mode") <|>
+    flag' InflBatchMode (long "batch" <> short 'b' <> help "Batch inflection mode")
+
+parseFileFlags :: Parser ProgramMode
+parseFileFlags =
+    flag' WriteLexicon (long "lexicon" <> short 'l' <> help "Write internal lexicon to output") <|>
+    flag' WriteTables (long "table" <> short 't' <> help "Write internal tables to output") <|>
+    flag' WriteGF (long "gf" <> help "Write GF to output") <|>
+    flag' WriteGFR (long "gfr" <> help "Write GFR to output") <|>
+    flag' WriteLatex (long "latex" <> help "Write LaTeX output to output")
+
+parseProgramOptions :: Parser Flags
+parseProgramOptions =
+    SimpleFlags <$> parseCoreFlags <|>
+    FileFlags <$> parseFileFlags <*> parseOutputFile
+  where
+    parseOutputFile :: Parser (Maybe String)
+    parseOutputFile = Just <$> strOption (long "file" <> short 'f' <> metavar "FILE" <> value "stdout" <> help "Write output to FILE")
+
+
+
+commonMain :: Language a => a -> IO ()
+commonMain a = do
+    opts <- execParser optsParser
+    putStrLn $
+        "Hello, " ++ (show . mode $ opts)
+  where
+    optsParser :: ParserInfo Flags
+    optsParser =
+        info
+            (helper <*> versionOption <*> parseProgramOptions)
+            (fullDesc <> progDesc "optparse example" <>
+             header
+                 "optparse-example - a small example program for optparse-applicative")
+    versionOption :: Parser (a -> a)
+    versionOption = infoOption "0.0" (long "version" <> help "Show version")
+
+run :: (String -> [[String]]) -> IO ()
+run f = Strict.interact $ unlines . analyze f . nWords
 
 gfTypes :: Language a => a -> String
 gfTypes l = "types." ++ name l ++ ".gf"
 
 readDict :: Language a => a -> FilePath -> IO Dictionary
-readDict l f =
-  do database <- parseDict l f
-     return $ database <> internDict l
+readDict l f = do database <- parseDict l f
+                  return $ database <> internDict l
 
 readTrie :: Language a => a -> FilePath -> IO SATrie
 readTrie l f = do d <- readDict l f
@@ -30,70 +97,6 @@ uName :: Language a => a -> String
 uName l = case name l of
            []     -> []
            (x:xs) -> toUpper x : xs
-
-commonMain :: Language a => a -> IO ()
-commonMain l = do
-  xx <- getArgs
-  lex <- catchIOError (getEnv (env l)) (\_ ->
-   do prErr $ "\n[" ++ env l ++ " is undefined, using \"./" ++ dbaseName l ++ "\".]\n"
-      return $ "./" ++ dbaseName l)
-  case xx of
-    []             -> do prErr $ welcome l
-                         t <- readTrie l lex
-                         run (analysis t (composition l))
-    ["-h"]         -> help
-    ["-s"]         -> do prErr $ welcome l
-                         putStrLn "\n[Synthesiser mode]\n"
-                         putStrLn $ "Enter a " ++ uName l ++ " word in any form.\n"
-                         putStrLn "If the word is not found, a [command] with [arguments].\n"
-                         putStrLn "Type 'c' to list commands.\n"
-                         putStrLn "Type 'q' to quit.\n"
-                         theDictionary <- readDict l lex
-                         trieDictL     <- readTrie l lex
-                         synthesiser l theDictionary trieDictL
-    ["-i"]         -> do prErr $ welcome l
-                         putStrLn "\n[Inflection mode]\n"
-                         putStrLn "Enter [command] [dictionary form].\n"
-                         putStrLn "Type 'c' to list commands.\n"
-                         putStrLn "Type 'q' to quit.\n"
-                         infMode l
-    ["-ib"]         -> do prErr $ welcome l
-                          imode l
-    _  ->
-      do theDictionary <- readDict l lex
-         case xx of
-          ["-lex"]            -> outputLex theDictionary
-          ["-lex",file]  -> do writeLex file theDictionary
-                               prErr $ "Wrote full form lexicon: " ++ file
-          ["-tables"]         -> outputTables theDictionary
-          ["-tables",file]    -> do writeTables file theDictionary
-                                    prErr $ "Wrote tables: " ++ file
-          ["-gf"]             -> outputGF (gfTypes l) theDictionary
-          ["-gf",file]        -> do writeGF file (gfTypes l) theDictionary
-                                    prErr $ "Wrote GF source code: " ++ file
-          ["-gfr"]            -> outputGFRes (gfTypes l) theDictionary
-          ["-gfr",file]       -> do writeGFRes file (gfTypes l) theDictionary
-                                    prErr $ "Wrote GF resource: " ++ file
-          ["-latex"]          -> outputLatex theDictionary
-          ["-latex",file]     -> do writeLatex file theDictionary
-                                    prErr $ "Wrote LaTeX document: " ++ file
-          ["-xml"]            -> outputXML theDictionary
-          ["-xml",file]       -> do writeXML file theDictionary
-                                    prErr $ "Wrote XML source code: " ++ file
-          ["-lexc"]           -> outputLEXC theDictionary
-          ["-lexc",file]      -> do writeLEXC file theDictionary
-                                    prErr $ "Wrote LEXC source code: " ++ file
-          ["-xfst"]           -> outputXFST theDictionary
-          ["-xfst",file]      -> do writeXFST file theDictionary
-                                    prErr $ "Wrote XFST source code: " ++ file
-          ["-sql"]            -> outputSQL theDictionary
-          ["-sql",file]   -> do writeSQL file theDictionary
-                                prErr $ "Wrote SQL source code: " ++ file
-          xs             -> do prErr $ "Invalid parameter" ++ unwords xs
-                               help
-
-run :: (String -> [[String]]) -> IO ()
-run f = Strict.interact $ unlines . analyze f . nWords
 
 analyze :: (String -> [[String]]) -> [String] -> [String]
 analyze _  []  = []
@@ -126,8 +129,8 @@ prInfo :: Dictionary -> IO()
 prInfo dict = prErr $ "Dictionary loaded: DF = " ++ show (size dict) ++ " and WF = " ++ show (sizeW dict) ++ ".\n"
 
 
-help :: IO()
-help = prErr . unlines $
+helpText :: IO()
+helpText = prErr . unlines $
                     ["",
                      " |---------------------------------------|",
                      " |        Program parameters             |",
