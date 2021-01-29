@@ -4,6 +4,7 @@ import           Control.Monad
 import           Data.Char
 import           Data.List           (intercalate, intersperse)
 import           Data.Semigroup
+import           Data.Tuple
 import           Dictionary
 import           Frontend
 import           GeneralIO
@@ -16,67 +17,134 @@ import           System.IO.Strict    as Strict
 import           Trie
 
 
+data SimpleMode
+  = SynthMode
+  | InflMode
+  | TaggerMode
+  | InflBatchMode
+  deriving (Show, Eq, Ord)
+data OutputMode
+  = LexMode
+  | WriteLexicons
+  | WriteTables
+  | WriteGF
+  | WriteGFR
+  | WriteLatex
+  | WriteLEXC
+  | WriteXFST
+  | WriteSQL
+  deriving (Show, Eq, Ord)
 data ProgramMode
-    = SynthMode
-    | InflMode
-    | InflBatchMode
-    | LexMode
-    | WriteLexicon
-    | WriteTables
-    | WriteGF
-    | WriteGFR
-    | WriteLatex
-  deriving (Show, Eq)
+  = SimpleProgramMode SimpleMode
+  | OutputProgramMode OutputMode
+  deriving (Show, Eq, Ord)
 data Flags
-  = SimpleFlags
-      { mode :: ProgramMode
+  = Flags
+      { file :: Maybe String
+      , mode :: ProgramMode
       }
-  | FileFlags
-      { mode :: ProgramMode
-      , file :: Maybe String
-      }
+  deriving (Show, Eq, Ord)
 
 
-
-parseCoreFlags :: Parser ProgramMode
-parseCoreFlags =
-    flag' SynthMode (long "synthesize" <> short 's' <> help "Interactive synthesizer mode") <|>
-    flag' InflMode (long "inflection" <> short 'i' <> help "Interactive inflection mode") <|>
-    flag' InflBatchMode (long "batch" <> short 'b' <> help "Batch inflection mode")
-
-parseFileFlags :: Parser ProgramMode
-parseFileFlags =
-    flag' WriteLexicon (long "lexicon" <> short 'l' <> help "Write internal lexicon to output") <|>
-    flag' WriteTables (long "table" <> short 't' <> help "Write internal tables to output") <|>
-    flag' WriteGF (long "gf" <> help "Write GF to output") <|>
-    flag' WriteGFR (long "gfr" <> help "Write GFR to output") <|>
-    flag' WriteLatex (long "latex" <> help "Write LaTeX output to output")
-
-parseProgramOptions :: Parser Flags
-parseProgramOptions =
-    SimpleFlags <$> parseCoreFlags <|>
-    FileFlags <$> parseFileFlags <*> parseOutputFile
+parseBaseFlags :: Parser Flags
+parseBaseFlags = Flags Nothing <$> (SimpleProgramMode <$> parseProgramMode)
   where
-    parseOutputFile :: Parser (Maybe String)
-    parseOutputFile = Just <$> strOption (long "file" <> short 'f' <> metavar "FILE" <> value "stdout" <> help "Write output to FILE")
+    parseProgramMode :: Parser SimpleMode
+    parseProgramMode =
+        flag' SynthMode (long "synthesize" <> short 's' <> help "Interactive synthesizer mode") <|>
+        flag' InflMode (long "inflection" <> short 'i' <> help "Interactive inflection mode") <|>
+        flag' InflBatchMode (long "batch" <> short 'b' <> help "Batch inflection mode") <|>
+        flag' TaggerMode (long "tag" <> short 't' <> help "Tagger mode")
 
+
+parseOutputFlags :: Parser Flags
+parseOutputFlags = Flags <$> parseFileTarget <*> (OutputProgramMode <$> parseProgramMode)
+  where
+    parseProgramMode :: Parser OutputMode
+    parseProgramMode =
+        flag' WriteLexicons (long "lex" <> help "Write internal lexicon to output") <|>
+        flag' WriteTables (long "tables" <> help "Write internal tables to output") <|>
+        flag' WriteGF (long "gf" <> help "Write GF to output") <|>
+        flag' WriteGFR (long "gfr" <> help "Write GFR to output") <|>
+        flag' WriteLatex (long "latex" <> help "Write LaTeX to output") <|>
+        flag' WriteLEXC (long "lexc" <> help "Write LEXC to output") <|>
+        flag' WriteXFST (long "xfst" <> help "Write XFST to output") <|>
+        flag' WriteSQL (long "sql" <> help "Write SQL to output")
+    parseFileTarget :: Parser (Maybe String)
+    parseFileTarget =
+        flag' () (short 'o' <> long "output") *>
+        optional (strOption (long "file" <> short 'f' <> metavar "FILE" <> help "test"))
+
+
+parseProgramFlags :: Language a => a -> ParserInfo Flags
+parseProgramFlags l = info coreParser programDescription
+  where
+    coreParser :: Parser Flags
+    coreParser =
+        helper <*> parseBaseFlags <|> parseOutputFlags
+    programDescription = fullDesc <> progDesc "TODO" --(welcome l)
 
 
 commonMain :: Language a => a -> IO ()
-commonMain a = do
-    opts <- execParser optsParser
-    putStrLn $
-        "Hello, " ++ (show . mode $ opts)
-  where
-    optsParser :: ParserInfo Flags
-    optsParser =
-        info
-            (helper <*> versionOption <*> parseProgramOptions)
-            (fullDesc <> progDesc "optparse example" <>
-             header
-                 "optparse-example - a small example program for optparse-applicative")
-    versionOption :: Parser (a -> a)
-    versionOption = infoOption "0.0" (long "version" <> help "Show version")
+commonMain l = do
+    flags <- execParser $ parseProgramFlags l
+    lex <- catchIOError (getEnv (env l))
+           (\_ -> do prErr $ "\n[" ++ env l ++ " is undefined, using \"./" ++ dbaseName l ++ "\".]\n"
+                     return $ "./" ++ dbaseName l)
+    let pm = mode flags
+    case pm of
+      SimpleProgramMode m ->
+        case m of
+          TaggerMode    ->
+            do prErr $ welcome l
+               t <- readTrie l lex
+               run (analysis t (composition l))
+          SynthMode     ->
+            do prErr $ welcome l
+               putStrLn "\n[Synthesiser mode]\n"
+               putStrLn $ "Enter a " ++ uName l ++ " word in any form.\n"
+               putStrLn "If the word is not found, a [command] with [arguments].\n"
+               putStrLn "Type 'c' to list commands.\n"
+               putStrLn "Type 'q' to quit.\n"
+               theDictionary <- readDict l lex
+               trieDictL     <- readTrie l lex
+               synthesiser l theDictionary trieDictL
+          InflMode      ->
+            do prErr $ welcome l
+               putStrLn "\n[Inflection mode]\n"
+               putStrLn "Enter [command] [dictionary form].\n"
+               putStrLn "Type 'c' to list commands.\n"
+               putStrLn "Type 'q' to quit.\n"
+               infMode l
+          InflBatchMode ->
+            do prErr $ welcome l
+               imode l
+      OutputProgramMode m ->
+        do let fi = file flags
+           theDictionary <- readDict l lex
+           let funcs = case m of
+                         WriteLexicons -> (outputLex,
+                                           (writeLex, "Wrote full form lexicon: "))
+                         WriteTables   -> (outputTables,
+                                           (writeTables, "Wrote tables: "))
+                         WriteGF       -> (outputGF (gfTypes l),
+                                           (writeGF (gfTypes l), "Wrote GF source code: "))
+                         WriteGFR      -> (outputGFRes (gfTypes l),
+                                           (writeGFRes (gfTypes l), "Wrote GF resource: "))
+                         WriteLatex    -> (outputLatex,
+                                           (writeLatex, "Wrote LaTeX document: "))
+                         WriteLEXC     -> (outputXML,
+                                           (writeXML, "Wrote XML source code: "))
+                         WriteXFST     -> (outputLEXC,
+                                           (writeLEXC, "Wrote LEXC source code: "))
+                         WriteSQL      -> (outputSQL,
+                                           (writeSQL, "Wrote SQL source code: "))
+           case fi of
+             Nothing -> fst funcs theDictionary
+             Just f  -> fst tup f theDictionary >>
+                        prErr (snd tup ++ f)
+                          where
+                            tup = snd funcs
 
 run :: (String -> [[String]]) -> IO ()
 run f = Strict.interact $ unlines . analyze f . nWords
@@ -127,37 +195,3 @@ welcome l = unlines
 
 prInfo :: Dictionary -> IO()
 prInfo dict = prErr $ "Dictionary loaded: DF = " ++ show (size dict) ++ " and WF = " ++ show (sizeW dict) ++ ".\n"
-
-
-helpText :: IO()
-helpText = prErr . unlines $
-                    ["",
-                     " |---------------------------------------|",
-                     " |        Program parameters             |",
-                     " |---------------------------------------|",
-                     " | -h             | Display this message |",
-                     " |---------------------------------------|",
-                     " | <None>         | Enter tagger mode    |",
-                     " |---------------------------------------|",
-                     " | -s             | Enter interactive    |",
-                     " |                | synthesiser mode     |",
-                     " |---------------------------------------|",
-                     " | -i             | Enter inflection     |",
-                     " |                | mode                 |",
-                     " |---------------------------------------|",
-                     " | -ib            | Inflection batch     |",
-                     " |                | mode                 |",
-                     " |---------------------------------------|",
-                     " | -lex    [file] | Full form lexicon    |",
-                     " | -tables [file] | Tables               |",
-                     " | -gf     [file] | GF top-level code    |",
-                     " | -gfr    [file] | GF resource code     |",
-                     " | -latex  [file] | LaTeX source code    |",
-                     " | -xml    [file] | XML source code      |",
-                     " | -lexc   [file] | LexC source code     |",
-                     " | -xfst   [file] | XFST source code     |",
-                     " | -sql    [file] | SQL source code      |",
-                     " |---------------------------------------|",
-                     ""
-                    ]
-
